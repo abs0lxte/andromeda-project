@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Andromeda 🪐</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #04040d;
+      --accent: #6a5cff;
+      --accent2: #a78bfa;
+      --accent-glow: rgba(106,92,255,0.4);
+      --border: rgba(106,92,255,0.2);
+      --border-hover: rgba(167,139,250,0.4);
+      --text: #dde0ff;
+      --text-dim: rgba(200,205,255,0.6);
+      --success: #5affa0;
+      --warning: #ffc850;
+      --info: #50c8ff;
+      --card-bg: rgba(14,14,36,0.95);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 20% 0%, rgba(80,50,180,0.12) 0%, transparent 60%),
+                  radial-gradient(circle at center, #070714, #04040d);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      overflow: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* ── Stars ── */
+    .stars-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.7;
+    }
+
+    .stars-layer {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,.9), transparent 60%),
+        radial-gradient(1.5px 1.5px at 90px 120px, rgba(255,255,255,.7), transparent 60%),
+        radial-gradient(1px 1px at 150px 80px, rgba(255,255,255,.8), transparent 60%),
+        radial-gradient(2px 2px at 220px 200px, rgba(255,255,255,.6), transparent 60%),
+        radial-gradient(1px 1px at 300px 140px, rgba(255,255,255,.85), transparent 60%),
+        radial-gradient(1px 1px at 40px 60px, rgba(255,255,255,.7), transparent 60%),
+        radial-gradient(2px 2px at 130px 170px, rgba(255,255,255,.8), transparent 60%),
+        radial-gradient(1px 1px at 200px 40px, rgba(255,255,255,.55), transparent 60%),
+        radial-gradient(1.5px 1.5px at 270px 220px, rgba(255,255,255,.9), transparent 60%);
+      background-size: 350px 350px;
+      animation: drift 180s linear infinite;
+    }
+
+    .stars-layer:nth-child(2) {
+      background-image:
+        radial-gradient(1px 1px at 60px 90px, rgba(255,255,255,.5), transparent 60%),
+        radial-gradient(1px 1px at 180px 160px, rgba(255,255,255,.75), transparent 60%),
+        radial-gradient(2px 2px at 260px 60px, rgba(255,255,255,.65), transparent 60%);
+      background-size: 500px 500px;
+      animation: drift2 240s linear infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-350px, 350px, 0); }
+    }
+
+    @keyframes drift2 {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(400px, -400px, 0); }
+    }
+
+    /* ── Ambient glow ring ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      border: 1px solid rgba(106,92,255,0.07);
+      box-shadow: 0 0 60px rgba(106,92,255,0.05);
+      pointer-events: none;
+      z-index: 0;
+      animation: slowSpin 40s linear infinite;
+    }
+
+    @keyframes slowSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Main App ── */
+    .app {
+      position: relative;
+      z-index: 1;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 24px;
+      background: linear-gradient(180deg, rgba(14,14,36,0.95) 0%, rgba(8,8,22,0.95) 100%);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .topbar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 20px;
+      color: transparent;
+      background: linear-gradient(135deg, #c4b8ff 0%, #6a5cff 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .brand-icon {
+      font-size: 22px;
+      filter: drop-shadow(0 0 10px rgba(167,139,250,0.5));
+    }
+
+    /* ── URL Input ── */
+    .url-input-container {
+      flex: 1;
+      position: relative;
+    }
+
+    .url-input {
+      width: 100%;
+      padding: 14px 20px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(20, 20, 40, 0.6);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .url-input::placeholder {
+      color: rgba(200,205,255,0.4);
+    }
+
+    .url-input:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 25px rgba(106,92,255,0.25), 0 0 0 1px rgba(167,139,250,0.15);
+      background: rgba(24, 24, 48, 0.8);
+    }
+
+    /* ── Toggle Switches ── */
+    .toggle-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: rgba(106,92,255,0.1);
+      border: 1px solid rgba(106,92,255,0.2);
+      transition: all 0.2s ease;
+    }
+
+    .toggle-label:hover {
+      background: rgba(106,92,255,0.15);
+      border-color: rgba(106,92,255,0.3);
+    }
+
+    .toggle-label input[type="checkbox"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      border: 2px solid var(--border);
+      background: rgba(20,20,40,0.8);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-label input[type="checkbox"]:checked {
+      background: var(--accent);
+      border-color: var(--accent2);
+    }
+
+    .toggle-label input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* ── Go Button ── */
+    .go-btn {
+      padding: 14px 28px;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px rgba(106,92,255,0.3);
+    }
+
+    .go-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .go-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(106,92,255,0.5), 0 0 0 1px rgba(167,139,250,0.2);
+    }
+
+    .go-btn:hover::before {
+      left: 100%;
+    }
+
+    .go-btn:active {
+      transform: translateY(0);
+    }
+
+    /* ── Main Content ── */
+    .main-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      min-height: 0;
+      padding: 0;
+      gap: 0;
+    }
+
+    /* ── History Sidebar ── */
+    .history-sidebar {
+      width: 320px;
+      min-width: 320px;
+      background: linear-gradient(180deg, var(--card-bg) 0%, rgba(8,8,22,0.95) 100%);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .history-sidebar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: -1px;
+      height: 100%;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, var(--accent), transparent);
+    }
+
+    .history-header {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .history-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      color: var(--accent2);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .clear-btn {
+      padding: 8px 16px;
+      background: rgba(255, 80, 80, 0.1);
+      border: 1px solid rgba(255, 80, 80, 0.3);
+      color: #ff5050;
+      border-radius: 10px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 1px;
+    }
+
+    .clear-btn:hover {
+      background: rgba(255, 80, 80, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .history-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .history-list::-webkit-scrollbar-track {
+      background: rgba(106,92,255,0.05);
+      border-radius: 3px;
+    }
+
+    .history-list::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 3px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: rgba(20, 20, 40, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .history-item:hover {
+      transform: translateY(-2px);
+      background: rgba(106,92,255,0.1);
+      border-color: var(--accent2);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .history-favicon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: linear-gradient(135deg, rgba(106,92,255,0.2), rgba(167,139,250,0.1));
+      border: 1px solid rgba(106,92,255,0.3);
+      flex-shrink: 0;
+      padding: 4px;
+    }
+
+    .history-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .history-title-text {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-url {
+      font-size: 11px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Viewer Area ── */
+    .viewer-area {
+      flex: 1;
+      position: relative;
+      min-width: 0;
+      background: rgba(0,0,0,0.2);
+    }
+
+    #viewFrame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #000;
+    }
+
+    /* ── Empty State ── */
+    .empty-state {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+      pointer-events: none;
+      z-index: 2;
+      background: radial-gradient(ellipse at center, rgba(8,8,22,0.8) 0%, transparent 70%);
+    }
+
+    .empty-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900;
+      color: transparent;
+      background: linear-gradient(135deg, #c4b8ff 0%, #6a5cff 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-shadow: 0 0 30px rgba(106,92,255,0.3);
+    }
+
+    .empty-subtitle {
+      font-size: 16px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      max-width: 400px;
+      line-height: 1.5;
+    }
+
+    .empty-hint {
+      position: absolute;
+      bottom: 60px;
+      font-size: 12px;
+      color: rgba(200,205,255,0.4);
+      letter-spacing: 1px;
+    }
+
+    /* ── Fullscreen Button ── */
+    .fullscreen-btn {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      z-index: 10;
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(106,92,255,0.3);
+      background: linear-gradient(135deg, rgba(106,92,255,0.2), rgba(167,139,250,0.1));
+      color: var(--accent2);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    .fullscreen-btn:hover {
+      background: linear-gradient(135deg, rgba(106,92,255,0.3), rgba(167,139,250,0.2));
+      border-color: var(--accent2);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(106,92,255,0.2);
+    }
+
+    .fullscreen-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* ── Responsive Design ── */
+    @media (max-width: 1024px) {
+      .topbar {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .brand {
+        order: 1;
+      }
+
+      .url-input-container {
+        order: 3;
+        width: 100%;
+      }
+
+      .toggle-group {
+        order: 2;
+        margin-left: auto;
+      }
+
+      .go-btn {
+        order: 4;
+      }
+
+      .history-sidebar {
+        width: 280px;
+        min-width: 280px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        flex-direction: column;
+      }
+
+      .history-sidebar {
+        width: 100%;
+        height: 240px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .toggle-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .toggle-label {
+        justify-content: center;
+        text-align: center;
+        padding: 8px;
+      }
+
+      .empty-title {
+        font-size: 32px;
+      }
+
+      .empty-subtitle {
+        font-size: 14px;
+        padding: 0 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .brand {
+        font-size: 16px;
+      }
+
+      .history-header {
+        padding: 16px;
+      }
+
+      .history-title {
+        font-size: 14px;
+      }
+
+      .url-input {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+
+      .go-btn {
+        padding: 12px 20px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars-container">
+    <div class="stars-layer"></div>
+    <div class="stars-layer"></div>
+  </div>
+
+  <div id="app" class="app">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="brand">
+        <span class="brand-icon">🪐</span>
+        <span>ANDROMEDA</span>
+      </div>
+
+      <div class="url-input-container">
+        <input 
+          id="urlInput" 
+          class="url-input" 
+          type="text" 
+          placeholder="Enter URL or search query..." 
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <input id="httpsToggle" type="checkbox" checked />
+          <span>Auto HTTPS</span>
+        </label>
+
+        <label class="toggle-label">
+          <input id="windowToggle" type="checkbox" />
+          <span>Open In Window</span>
+        </label>
+      </div>
+
+      <button id="goBtn" class="go-btn">GO</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- History Sidebar -->
+      <aside class="history-sidebar">
+        <div class="history-header">
+          <h2 class="history-title">History</h2>
+          <button id="clearHistoryBtn" class="clear-btn">CLEAR</button>
+        </div>
+        <div id="historyList" class="history-list">
+          <!-- History items will be added here -->
+        </div>
+      </aside>
+
+      <!-- Viewer Area -->
+      <section class="viewer-area" id="viewer">
+        <iframe
+          id="viewFrame"
+          src="about:blank"
+          allow="fullscreen"
+          allowfullscreen
+        ></iframe>
+
+        <button id="mainFsBtn" class="fullscreen-btn" style="display: none;">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+          </svg>
+          FULLSCREEN
+        </button>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state">
+          <h1 class="empty-title">ANDROMEDA</h1>
+          <p class="empty-subtitle">Enter a URL to begin your journey through the cosmos</p>
+          <div class="empty-hint">Press / to focus input • Press Enter to navigate</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const urlInput = document.getElementById('urlInput');
+    const goBtn = document.getElementById('goBtn');
+    const httpsToggle = document.getElementById('httpsToggle');
+    const windowToggle = document.getElementById('windowToggle');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    const historyList = document.getElementById('historyList');
+    const viewFrame = document.getElementById('viewFrame');
+    const emptyState = document.getElementById('emptyState');
+    const viewer = document.getElementById('viewer');
+    const mainFsBtn = document.getElementById('mainFsBtn');
+
+    // Storage
+    const STORAGE_KEY = 'andromeda_history_v2';
+  // ─── Dashboard Integration ──────────────────────────────────────
+function trackToDashboard(url) {
+    if (typeof DashboardTracker !== 'undefined') {
+        DashboardTracker.trackVisit(url, 'main');
+    } else if (window.parent && window.parent.dashboardAPI) {
+        window.parent.dashboardAPI.trackWebsiteVisit(url, 'main');
+    }
+}
+
+    // State
+    let historyData = loadHistory();
+    let openedWindow = null;
+
+    // Initialize
+    init();
+
+    function init() {
+      renderHistory();
+      setupEventListeners();
+      setupKeyboardShortcuts();
+      
+      // Auto-show fullscreen button based on window toggle
+      windowToggle.addEventListener('change', () => {
+        mainFsBtn.style.display = windowToggle.checked ? 'flex' : 'none';
+      });
+    }
+
+    function loadHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveHistory() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(historyData.slice(0, 50)));
+      } catch (e) {
+        console.error('Failed to save history:', e);
+      }
+    }
+
+    function normalizeUrl(input) {
+      let value = input.trim();
+      if (!value) return '';
+
+      // Handle search queries
+      if (!value.includes('.') && !value.includes(' ') && 
+          !value.startsWith('http://') && !value.startsWith('https://')) {
+        return `https://www.google.com/search?q=${encodeURIComponent(value)}`;
+      }
+
+      // Add protocol if missing
+      if (!/^https?:\/\//i.test(value)) {
+        value = httpsToggle.checked ? `https://${value}` : `http://${value}`;
+      }
+
+      return value;
+    }
+
+    function getHostname(url) {
+      try {
+        return new URL(url).hostname;
+      } catch {
+        return '';
+      }
+    }
+
+    function getFaviconUrl(url) {
+      const host = getHostname(url);
+      return host ? `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(host)}` : '';
+    }
+
+    function getSiteTitle(url) {
+      try {
+        const host = new URL(url).hostname;
+        return host.replace(/^www\./, '');
+      } catch {
+        return url;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderHistory() {
+      historyList.innerHTML = '';
+
+      if (historyData.length === 0) {
+        historyList.innerHTML = `
+          <div style="
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 14px;
+            letter-spacing: 1px;
+          ">
+            No browsing history yet.<br>
+            Start by visiting a website!
+          </div>
+        `;
+        return;
+      }
+
+      historyData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML = `
+          <img class="history-favicon" src="${item.favicon}" alt="" onerror="this.style.display='none'">
+          <div class="history-text">
+            <div class="history-title-text">${escapeHtml(item.title || item.url)}</div>
+            <div class="history-url">${escapeHtml(item.url)}</div>
+          </div>
+        `;
+        
+        div.addEventListener('click', () => loadSite(item.url));
+        historyList.appendChild(div);
+      });
+    }
+
+    function addToHistory(url) {
+      const entry = {
+        url,
+        title: getSiteTitle(url),
+        favicon: getFaviconUrl(url),
+        timestamp: Date.now()
+      };
+
+      // Remove duplicates and keep only latest 50 entries
+      historyData = [entry, ...historyData.filter(i => i.url !== url)].slice(0, 50);
+      saveHistory();
+      renderHistory();
+    }
+
+    function clearHistory() {
+      if (confirm('Are you sure you want to clear all browsing history?')) {
+        historyData = [];
+        saveHistory();
+        renderHistory();
+      }
+    }
+
+    function hideEmptyState() {
+      emptyState.style.display = 'none';
+    }
+
+    function showEmptyState() {
+      emptyState.style.display = 'flex';
+    }
+
+    function createNewWindow(url) {
+      if (openedWindow && !openedWindow.closed) {
+        openedWindow.close();
+      }
+
+      openedWindow = window.open('about:blank', '_blank');
+      if (!openedWindow) {
+        alert('Popup blocked. Please allow popups for this site.');
+        return null;
+      }
+
+      const safeUrl = url.replace(/"/g, '&quot;');
+      
+      const windowHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Andromeda - Loading...</title>
+          <style>
+            * { margin:0; padding:0; box-sizing:border-box; }
+            body {
+              background: #04040d;
+              color: #dde0ff;
+              font-family: 'Orbitron', 'Rajdhani', sans-serif;
+              overflow: hidden;
+            }
+            .loading-screen {
+              position: absolute;
+              inset: 0;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              gap: 20px;
+              background: radial-gradient(ellipse at center, #070714, #04040d);
+            }
+            .loading-spinner {
+              width: 40px;
+              height: 40px;
+              border: 3px solid rgba(106,92,255,0.2);
+              border-top: 3px solid #6a5cff;
+              border-radius: 50%;
+              animation: spin 1s linear infinite;
+            }
+            @keyframes spin { to { transform: rotate(360deg); } }
+            .loading-text {
+              font-size: 14px;
+              color: rgba(200,205,255,0.6);
+              letter-spacing: 2px;
+            }
+            .site-frame {
+              width: 100%;
+              height: calc(100vh - 60px);
+              border: 0;
+              background: #000;
+            }
+            .controls {
+              height: 60px;
+              background: rgba(14,14,36,0.95);
+              border-top: 1px solid rgba(106,92,255,0.3);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 0 20px;
+            }
+            .fullscreen-btn {
+              padding: 12px 24px;
+              background: linear-gradient(135deg, #6a5cff, #a78bfa);
+              color: white;
+              border: none;
+              border-radius: 10px;
+              font-family: 'Orbitron', sans-serif;
+              font-weight: 700;
+              letter-spacing: 2px;
+              cursor: pointer;
+              transition: transform 0.2s;
+            }
+            .fullscreen-btn:hover {
+              transform: translateY(-2px);
+            }
+          </style>
+        </head>
+        <body>
+          <div class="loading-screen" id="loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">LOADING...</div>
+          </div>
+          <iframe class="site-frame" id="siteFrame" allow="fullscreen" allowfullscreen></iframe>
+          <div class="controls">
+            <button id="fsBtn" class="fullscreen-btn">FULLSCREEN</button>
+          </div>
+          <script>
+            const siteFrame = document.getElementById('siteFrame');
+            const fsBtn = document.getElementById('fsBtn');
+            const loading = document.getElementById('loading');
+            
+            function goFullscreen() {
+              const elem = siteFrame;
+              if (elem.requestFullscreen) elem.requestFullscreen();
+              else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+              else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+            }
+            
+            fsBtn.addEventListener('click', goFullscreen);
+            siteFrame.addEventListener('load', () => {
+              setTimeout(() => {
+                loading.style.display = 'none';
+              }, 300);
+            });
+            
+            siteFrame.src = ${JSON.stringify(safeUrl)};
+          <\/script>
+        </body>
+        </html>
+      `;
+
+      openedWindow.document.open();
+      openedWindow.document.write(windowHtml);
+      openedWindow.document.close();
+      
+      return openedWindow;
+    }
+
+    function loadSite(rawInput) {
+      const url = normalizeUrl(rawInput);
+      if (!url) return;
+      trackToDashboard(url);
+          if (typeof DashboardTracker !== 'undefined') {
+        DashboardTracker.trackVisit(url, 'main');
+    }
+
+      addToHistory(url);
+      hideEmptyState();
+
+      if (windowToggle.checked) {
+        // Load in main iframe
+        viewFrame.src = url;
+        mainFsBtn.style.display = 'flex';
+      } else {
+        // Open in new window
+        createNewWindow(url);
+      }
+    }
+
+    function requestFullscreen(element) {
+      if (!element) return;
+      if (element.requestFullscreen) return element.requestFullscreen();
+      if (element.webkitRequestFullscreen) return element.webkitRequestFullscreen();
+      if (element.msRequestFullscreen) return element.msRequestFullscreen();
+    }
+
+    function setupEventListeners() {
+ goBtn.addEventListener('click', () => {
+    loadSite(urlInput.value);
+}); 
+urlInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    loadSite(urlInput.value);
+  }
+});
+      
+      clearHistoryBtn.addEventListener('click', clearHistory);
+      mainFsBtn.addEventListener('click', () => requestFullscreen(viewFrame));
+    }
+
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        // Focus URL input on '/'
+        if (e.key === '/' && document.activeElement !== urlInput) {
+          e.preventDefault();
+          urlInput.focus();
+          urlInput.select();
+        }
+        
+        // Clear input on Escape
+        if (e.key === 'Escape' && document.activeElement === urlInput) {
+          urlInput.value = '';
+          e.preventDefault();
+        }
+        
+        // Cycle through history with arrow keys
+        if (e.key === 'ArrowUp' && document.activeElement === urlInput) {
+          e.preventDefault();
+          if (historyData.length > 0) {
+            urlInput.value = historyData[0].url;
+          }
+        }
+      });
+    }
+// Add this at the end of your andromeda.html script section (proxy launcher)
+function trackToDashboard(url, method) {
+    try {
+        const dataKey = 'andromeda_dashboard_v2';
+        let data = JSON.parse(localStorage.getItem(dataKey) || '{}');
+        
+        // Initialize
+        if (!data.methodUsage) data.methodUsage = { main: 0, blank: 0, anticlose: 0 };
+        if (!data.websiteHistory) data.websiteHistory = [];
+        
+        // Create visit
+        const visit = {
+            url: url,
+            method: method,
+            timestamp: Date.now(),
+            visitTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        
+        // Update data
+        data.lastVisitedWebsite = visit;
+        data.lastUsedMethod = method;
+        data.methodUsage[method] = (data.methodUsage[method] || 0) + 1;
+        data.websiteHistory.unshift(visit);
+        
+        // Save
+        localStorage.setItem(dataKey, JSON.stringify(data));
+        console.log('✅ Dashboard updated:', visit);
+        return true;
+    } catch (e) {
+        console.error('❌ Dashboard error:', e);
+        return false;
+    }
+}
+  </script>
+</body>
+</html>

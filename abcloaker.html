@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Andromeda 🪐 Launcher</title>
+  <link rel="icon" type="image/png" href="file:///home/chronos/u-6d54fbfcc3c58a67ab9dced690b274d8bd116b20/MyFiles/Downloads/Andromeda%20project/main/important/logos/AndromedaLogo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #04040d;
+      --accent: #6a5cff;
+      --accent2: #a78bfa;
+      --accent-glow: rgba(106,92,255,0.4);
+      --border: rgba(106,92,255,0.2);
+      --border-hover: rgba(167,139,250,0.4);
+      --text: #dde0ff;
+      --text-dim: rgba(200,205,255,0.6);
+      --success: #5affa0;
+      --warning: #ffc850;
+      --danger: #ff5050;
+      --card-bg: rgba(14,14,36,0.95);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body {
+      height: 100%;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 20% 0%, rgba(80,50,180,0.12) 0%, transparent 60%),
+                  radial-gradient(circle at center, #070714, #04040d);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Stars Background ── */
+    .stars-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .stars-layer {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,.9), transparent 60%),
+        radial-gradient(1.5px 1.5px at 90px 120px, rgba(255,255,255,.7), transparent 60%),
+        radial-gradient(1px 1px at 150px 80px, rgba(255,255,255,.8), transparent 60%),
+        radial-gradient(2px 2px at 220px 200px, rgba(255,255,255,.6), transparent 60%),
+        radial-gradient(1px 1px at 300px 140px, rgba(255,255,255,.85), transparent 60%);
+      background-size: 350px 350px;
+      animation: drift 180s linear infinite;
+      opacity: 0.6;
+    }
+
+    .stars-layer:nth-child(2) {
+      background-image:
+        radial-gradient(1px 1px at 40px 60px, rgba(255,255,255,.7), transparent 60%),
+        radial-gradient(2px 2px at 130px 170px, rgba(255,255,255,.8), transparent 60%),
+        radial-gradient(1px 1px at 200px 40px, rgba(255,255,255,.55), transparent 60%),
+        radial-gradient(1.5px 1.5px at 270px 220px, rgba(255,255,255,.9), transparent 60%);
+      background-size: 400px 400px;
+      animation: drift2 240s linear infinite;
+      opacity: 0.4;
+    }
+
+    .stars-layer:nth-child(3) {
+      background-image:
+        radial-gradient(1px 1px at 60px 90px, rgba(255,255,255,.5), transparent 60%),
+        radial-gradient(1px 1px at 180px 160px, rgba(255,255,255,.75), transparent 60%),
+        radial-gradient(2px 2px at 260px 60px, rgba(255,255,255,.65), transparent 60%);
+      background-size: 500px 500px;
+      animation: drift3 300s linear infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-350px, 350px, 0); }
+    }
+
+    @keyframes drift2 {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(400px, -400px, 0); }
+    }
+
+    @keyframes drift3 {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-500px, -500px, 0); }
+    }
+
+    /* ── Ambient glow ring ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      border: 1px solid rgba(106,92,255,0.07);
+      box-shadow: 0 0 60px rgba(106,92,255,0.05);
+      pointer-events: none;
+      z-index: 0;
+      animation: slowSpin 40s linear infinite;
+    }
+
+    @keyframes slowSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Main Card ── */
+    .launcher-card {
+      position: relative;
+      z-index: 2;
+      width: 520px;
+      max-width: 94%;
+      padding: 32px;
+      border-radius: 20px;
+      background: linear-gradient(160deg, var(--card-bg) 0%, rgba(8,8,22,0.95) 100%);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 40px rgba(106,92,255,0.25), 0 0 0 1px rgba(167,139,250,0.15);
+      color: var(--text);
+      text-align: center;
+      backdrop-filter: blur(10px);
+      animation: fadeInUp 0.8s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .launcher-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.04), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.6s ease;
+      pointer-events: none;
+    }
+
+    .launcher-card:hover::before {
+      left: 130%;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── Header ── */
+    .card-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .card-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(22px, 5vw, 32px);
+      color: transparent;
+      background: linear-gradient(135deg, #c4b8ff 0%, #6a5cff 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--accent2);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .card-divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      margin: 4px 0 0;
+    }
+
+    /* ── Warning Box ── */
+    .warning-box {
+      background: linear-gradient(135deg, rgba(255, 80, 80, 0.1), rgba(255, 200, 80, 0.05));
+      border: 1px solid rgba(255, 80, 80, 0.25);
+      border-radius: 14px;
+      padding: 18px;
+      margin: 20px 0;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .warning-box::before {
+      content: '⚠️';
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 20px;
+      opacity: 0.2;
+    }
+
+    .warning-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      color: var(--danger);
+      margin-bottom: 8px;
+      letter-spacing: 1.5px;
+    }
+
+    .warning-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(200,205,255,0.8);
+    }
+
+    /* ── URL Input ── */
+    .url-input-container {
+      position: relative;
+      margin: 20px 0;
+    }
+
+    #siteInput {
+      width: 100%;
+      padding: 16px 20px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(20, 20, 40, 0.6);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    #siteInput::placeholder {
+      color: rgba(200,205,255,0.4);
+    }
+
+    #siteInput:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 25px rgba(106,92,255,0.25), 0 0 0 1px rgba(167,139,250,0.15);
+      background: rgba(24, 24, 48, 0.8);
+    }
+
+    /* ── Rules Checkbox ── */
+    .rules-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      margin: 16px 0 24px;
+    }
+
+    .rules-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .rules-checkbox input[type="checkbox"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 2px solid var(--border);
+      background: rgba(20,20,40,0.8);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .rules-checkbox input[type="checkbox"]:checked {
+      background: var(--accent);
+      border-color: var(--accent2);
+    }
+
+    .rules-checkbox input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .rules-label {
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .rules-label a {
+      color: var(--accent2);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .rules-label a:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    /* ── Buttons ── */
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .launcher-button {
+      padding: 14px 28px;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px rgba(106,92,255,0.3);
+      min-width: 180px;
+    }
+
+    .launcher-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .launcher-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(106,92,255,0.5), 0 0 0 1px rgba(167,139,250,0.2);
+    }
+
+    .launcher-button:hover::before {
+      left: 100%;
+    }
+
+    .launcher-button:active {
+      transform: translateY(0);
+    }
+
+    .launcher-button.secondary {
+      background: linear-gradient(135deg, rgba(80,200,255,0.2), rgba(80,255,160,0.15));
+      color: var(--info);
+      border: 1px solid rgba(80,200,255,0.3);
+    }
+
+    .launcher-button.secondary:hover {
+      background: linear-gradient(135deg, rgba(80,200,255,0.3), rgba(80,255,160,0.25));
+      box-shadow: 0 0 25px rgba(80,200,255,0.3);
+    }
+
+    /* ── Alert Box ── */
+    .alert-box {
+      position: fixed;
+      left: 50%;
+      top: -100px;
+      transform: translateX(-50%);
+      padding: 16px 24px;
+      border-radius: 14px;
+      background: linear-gradient(160deg, var(--card-bg) 0%, rgba(8,8,22,0.95) 100%);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      z-index: 9999;
+      box-shadow: 0 0 30px rgba(106,92,255,0.3);
+      backdrop-filter: blur(10px);
+      transition: top 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .alert-box.show {
+      top: 20px;
+      opacity: 1;
+    }
+
+    .alert-icon {
+      font-size: 20px;
+    }
+
+    .alert-success .alert-icon { color: var(--success); }
+    .alert-warning .alert-icon { color: var(--warning); }
+    .alert-error .alert-icon { color: var(--danger); }
+
+    /* ── Responsive Design ── */
+    @media (max-width: 768px) {
+      .launcher-card {
+        padding: 24px;
+        width: 92%;
+      }
+
+      .button-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .launcher-button {
+        min-width: 100%;
+      }
+
+      .warning-box {
+        padding: 14px;
+      }
+
+      .alert-box {
+        width: 92%;
+        padding: 14px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .launcher-card {
+        padding: 20px 16px;
+      }
+
+      .card-header h1 {
+        font-size: 20px;
+      }
+
+      .card-subtitle {
+        font-size: 12px;
+      }
+
+      #siteInput {
+        padding: 14px 16px;
+        font-size: 14px;
+      }
+
+      .launcher-button {
+        padding: 12px 20px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Stars Background -->
+  <div class="stars-container">
+    <div class="stars-layer"></div>
+    <div class="stars-layer"></div>
+    <div class="stars-layer"></div>
+  </div>
+
+  <!-- Main Launcher Card -->
+  <div class="launcher-card" role="main" aria-labelledby="title">
+    <div class="card-header">
+      <h1 id="title">ANDROMEDA</h1>
+      <div class="card-subtitle">Secure Proxy Launcher</div>
+      <div class="card-divider"></div>
+    </div>
+
+    <!-- Warning Section -->
+    <div class="warning-box">
+      <div class="warning-title">IMPORTANT NOTICE</div>
+      <div class="warning-text">
+        • You are responsible for your own actions and compliance with local laws.<br>
+        • Only use this tool for educational purposes and accessing legitimate content.<br>
+        • The target site must allow embedding (iframe) permissions.
+      </div>
+    </div>
+
+    <!-- URL Input -->
+    <div class="url-input-container">
+      <input 
+        id="siteInput" 
+        type="text" 
+        inputmode="url" 
+        placeholder="https://example.com or search query"
+        autocomplete="off"
+        aria-label="Website URL"
+      />
+    </div>
+
+    <!-- Rules Agreement -->
+    <div class="rules-container">
+      <label class="rules-checkbox">
+        <input id="acceptRules" type="checkbox" />
+        <span class="rules-label">I accept the <a href="#" onclick="showRulesDetails()">rules & terms</a></span>
+      </label>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="button-group">
+      <button id="openBtn" class="launcher-button" aria-label="Open unblocked page">
+        OPEN UNBLOCKED PAGE
+      </button>
+      <button id="downloadBtn" class="launcher-button secondary" aria-label="Download Andromeda files">
+        DOWNLOAD FILES
+      </button>
+    </div>
+
+    <!-- Footer Note -->
+    <div style="margin-top: 20px; font-size: 12px; color: var(--text-dim);">
+      Made with ❤️ by <strong>abs0lute</strong> • Andromeda 🪐
+    </div>
+  </div>
+
+  <!-- Alert Box -->
+  <div id="alertBox" class="alert-box" role="status" aria-live="polite">
+    <span class="alert-icon">⚠️</span>
+    <span class="alert-text"></span>
+  </div>
+
+  <script>
+    // DOM Elements
+    const siteInput = document.getElementById('siteInput');
+    const openBtn = document.getElementById('openBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const acceptRules = document.getElementById('acceptRules');
+    const alertBox = document.getElementById('alertBox');
+    const alertText = alertBox.querySelector('.alert-text');
+
+    // Alert Types
+    const AlertType = {
+      SUCCESS: 'success',
+      WARNING: 'warning',
+      ERROR: 'error'
+    };
+
+    // Enhanced Alert System
+    function showAlert(message, type = AlertType.WARNING, duration = 3000) {
+      // Set alert content
+      alertText.textContent = message;
+      
+      // Set alert type class
+      alertBox.className = 'alert-box';
+      alertBox.classList.add('show');
+      alertBox.classList.add(`alert-${type}`);
+      
+      // Set appropriate icon
+      const iconMap = {
+        [AlertType.SUCCESS]: '✅',
+        [AlertType.WARNING]: '⚠️',
+        [AlertType.ERROR]: '❌'
+      };
+      alertBox.querySelector('.alert-icon').textContent = iconMap[type] || '⚠️';
+      
+      // Clear previous timeout
+      if (alertBox.timeoutId) {
+        clearTimeout(alertBox.timeoutId);
+      }
+      
+      // Auto-hide alert
+      alertBox.timeoutId = setTimeout(() => {
+        alertBox.classList.remove('show');
+      }, duration);
+    }
+
+    // Enhanced URL Validation
+    function normalizeUrl(input) {
+      let url = input.trim();
+      if (!url) return null;
+      
+      // Handle search queries
+      const isSearch = !url.includes('.') && !url.includes(' ') && 
+                      !url.startsWith('http://') && !url.startsWith('https://');
+      
+      if (isSearch) {
+        return `https://www.google.com/search?q=${encodeURIComponent(url)}`;
+      }
+      
+      // Add protocol if missing
+      if (!/^https?:\/\//i.test(url)) {
+        url = `https://${url}`;
+      }
+      
+      // Validate URL format
+      try {
+        new URL(url);
+        return url;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // Enhanced Open Function
+    function openUnblockedPage() {
+      const rawUrl = siteInput.value;
+      
+      // Validate input
+      if (!rawUrl) {
+        showAlert('Please enter a website URL or search query.', AlertType.ERROR);
+        siteInput.focus();
+        return;
+      }
+      
+      // Check rules acceptance
+      if (!acceptRules.checked) {
+        showAlert('You must accept the rules before continuing.', AlertType.WARNING);
+        acceptRules.focus();
+        return;
+      }
+      
+      // Normalize URL
+      const normalizedUrl = normalizeUrl(rawUrl);
+      if (!normalizedUrl) {
+        showAlert('Please enter a valid URL or search query.', AlertType.ERROR);
+        siteInput.focus();
+        return;
+      }
+      // ADD THIS LINE to track to dashboard
+    if (typeof DashboardTracker !== 'undefined') {
+        DashboardTracker.trackVisit(normalizedUrl, 'blank');
+    }
+      // Open in new window with better iframe
+      try {
+        const newWindow = window.open('', '_blank');
+        if (!newWindow) {
+          showAlert('Popup blocked! Please allow popups for this site.', AlertType.ERROR);
+          return;
+        }
+        
+        newWindow.document.open();
+        newWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Andromeda - Loading...</title>
+            <style>
+              * { margin:0; padding:0; box-sizing:border-box; }
+              body { background:#000; color:#fff; font-family:monospace; overflow:hidden; }
+              .loading { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
+              .spinner { width:40px; height:40px; border:3px solid #6a5cff; border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite; }
+              @keyframes spin { to { transform:rotate(360deg); } }
+            </style>
+          </head>
+          <body>
+            <div class="loading">
+              <div class="spinner"></div>
+              <div>Loading Andromeda...</div>
+            </div>
+            <iframe 
+              src="${normalizedUrl.replace(/"/g, '&quot;')}" 
+              style="width:100vw;height:100vh;border:none;display:none;"
+              allow="fullscreen *; geolocation *; microphone *; camera *; payment *"
+              allowfullscreen>
+            </iframe>
+            <script>
+              const iframe = document.querySelector('iframe');
+              const loading = document.querySelector('.loading');
+              
+              iframe.addEventListener('load', () => {
+                setTimeout(() => {
+                  loading.style.display = 'none';
+                  iframe.style.display = 'block';
+                }, 500);
+              });
+              
+              // Start loading
+              iframe.style.display = 'block';
+            <\/script>
+          </body>
+          </html>
+        `);
+        newWindow.document.close();
+        
+        // Add to recent URLs
+        addToRecent(normalizedUrl);
+        showAlert('Successfully opened in new window!', AlertType.SUCCESS);
+        
+      } catch (error) {
+        console.error('Error opening window:', error);
+        showAlert('Unable to open the page. Please try again.', AlertType.ERROR);
+      }
+    }
+
+    // Download Function
+    function downloadFiles() {
+      showAlert('Download functionality coming soon!', AlertType.WARNING);
+      
+      // Create a simple file for now
+      const content = `# Andromeda Configuration\n\nWelcome to Andromeda! This is a placeholder download.\n`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'andromeda-config.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Recent URLs Storage
+    function addToRecent(url) {
+      try {
+        const recent = JSON.parse(localStorage.getItem('andromeda_recent_urls') || '[]');
+        const newRecent = [url, ...recent.filter(item => item !== url)].slice(0, 10);
+        localStorage.setItem('andromeda_recent_urls', JSON.stringify(newRecent));
+      } catch (e) {
+        console.warn('Could not save to recent URLs:', e);
+      }
+    }
+
+    // Rules Details Function
+    function showRulesDetails() {
+      const rules = `
+        RULES & TERMS OF USE
+        
+        1. EDUCATIONAL USE ONLY
+           - This tool is for educational and research purposes only.
+           - Do not use for illegal activities or to bypass legitimate restrictions.
+        
+        2. RESPONSIBILITY
+           - You are solely responsible for your actions when using this tool.
+           - We are not liable for any misuse or legal consequences.
+        
+        3. CONTENT RESTRICTIONS
+           - Do not attempt to access inappropriate or harmful content.
+           - Respect website terms of service and robots.txt files.
+        
+        4. SECURITY
+           - Never enter sensitive information (passwords, credit cards).
+           - This tool provides minimal security protection.
+        
+        5. FAIR USE
+           - Do not overload or abuse websites.
+           - Respect server resources and rate limits.
+      `;
+      
+      showAlert('Please read the full rules in the console (F12)', AlertType.WARNING, 5000);
+      console.log('%c📜 ANDROMEDA RULES & TERMS', 'color: #6a5cff; font-weight: bold; font-size: 16px;');
+      console.log(rules);
+    }
+
+    // Event Listeners
+    openBtn.addEventListener('click', openUnblockedPage);
+    
+    downloadBtn.addEventListener('click', downloadFiles);
+    
+    siteInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        openUnblockedPage();
+      }
+    });
+    
+    // Focus management
+    siteInput.addEventListener('focus', () => {
+      siteInput.select();
+    });
+    
+    // Initialize with example URL
+    window.addEventListener('load', () => {
+      if (!siteInput.value) {
+        siteInput.placeholder = 'Try: example.com or google.com';
+      }
+      
+      // Auto-accept rules for convenience (can be removed)
+      acceptRules.checked = false;
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + Enter to submit
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        openUnblockedPage();
+      }
+      
+      // Escape to clear
+      if (e.key === 'Escape' && document.activeElement === siteInput) {
+        siteInput.value = '';
+        e.preventDefault();
+      }
+    });
+  // Dashboard tracking for About:Blank Cloaker
+function setupDashboardTracking() {
+    // Track URL submissions
+    const forms = document.querySelectorAll('form');
+    const buttons = document.querySelectorAll('button, input[type="submit"]');
+    
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const urlInput = this.querySelector('input[type="text"], input[type="url"]');
+            if (urlInput && urlInput.value.trim()) {
+                setTimeout(() => {
+                    if (typeof DashboardTracker !== 'undefined') {
+                        DashboardTracker.trackVisit(urlInput.value.trim(), 'blank');
+                    } else if (window.parent && window.parent.dashboardAPI) {
+                        window.parent.dashboardAPI.trackWebsiteVisit(urlInput.value.trim(), 'blank');
+                    }
+                }, 1000);
+            }
+        });
+    });
+    
+    buttons.forEach(btn => {
+        const text = (btn.textContent || btn.value || '').toLowerCase();
+        if (text.includes('cloak') || text.includes('open') || text.includes('go')) {
+            btn.addEventListener('click', function() {
+                const urlInput = document.querySelector('input[type="text"], input[type="url"]');
+                if (urlInput && urlInput.value.trim()) {
+                    setTimeout(() => {
+                        if (typeof DashboardTracker !== 'undefined') {
+                            DashboardTracker.trackVisit(urlInput.value.trim(), 'blank');
+                        } else if (window.parent && window.parent.dashboardAPI) {
+                            window.parent.dashboardAPI.trackWebsiteVisit(urlInput.value.trim(), 'blank');
+                        }
+                    }, 1000);
+                }
+            });
+        }
+    });
+}
+
+// Run on page load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupDashboardTracking);
+} else {
+    setupDashboardTracking();
+}
+// ─── SIMPLE DASHBOARD TRACKER FOR ABCLOAKER ─────────────────
+function trackToDashboard(url, method) {
+    console.log('📝 Tracking to dashboard:', url, method);
+    
+    try {
+        const dataKey = 'andromeda_dashboard_v2';
+        let dashboardData = JSON.parse(localStorage.getItem(dataKey) || '{}');
+        
+        // Initialize if needed
+        if (!dashboardData.methodUsage) dashboardData.methodUsage = { main: 0, blank: 0, anticlose: 0 };
+        if (!dashboardData.websiteHistory) dashboardData.websiteHistory = [];
+        if (!dashboardData.pagesVisited) dashboardData.pagesVisited = 0;
+        if (!dashboardData.recentActivity) dashboardData.recentActivity = [];
+        
+        // Create visit object
+        const visit = {
+            url: url,
+            method: method,
+            timestamp: Date.now(),
+            visitTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            domain: extractDomain(url)
+        };
+        
+        // Update data
+        dashboardData.lastVisitedWebsite = visit;
+        dashboardData.lastUsedMethod = method;
+        dashboardData.methodUsage[method] = (dashboardData.methodUsage[method] || 0) + 1;
+        dashboardData.websiteHistory.unshift(visit);
+        dashboardData.pagesVisited = (dashboardData.pagesVisited || 0) + 1;
+        
+        // Keep only last 10 visits
+        if (dashboardData.websiteHistory.length > 10) {
+            dashboardData.websiteHistory = dashboardData.websiteHistory.slice(0, 10);
+        }
+        
+        // Save to localStorage
+        localStorage.setItem(dataKey, JSON.stringify(dashboardData));
+        
+        console.log('✅ Dashboard updated for About:Blank');
+        return true;
+    } catch (error) {
+        console.error('❌ Dashboard error:', error);
+        return false;
+    }
+}
+
+// Helper function
+function extractDomain(url) {
+    try {
+        let domain = url.replace(/^(https?:\/\/)?(www\.)?/, '');
+        domain = domain.split('/')[0];
+        domain = domain.split('?')[0];
+        return domain.length > 30 ? domain.substring(0, 27) + '...' : domain;
+    } catch (e) {
+        return url.substring(0, 30);
+    }
+}
+
+// ─── MODIFY THE openUnblockedPage FUNCTION ───────────────────
+// Find the openUnblockedPage function and add tracking:
+
+function openUnblockedPage() {
+    const rawUrl = siteInput.value;
+    
+    // Validate input
+    if (!rawUrl) {
+        showAlert('Please enter a website URL or search query.', AlertType.ERROR);
+        siteInput.focus();
+        return;
+    }
+    
+    // Check rules acceptance
+    if (!acceptRules.checked) {
+        showAlert('You must accept the rules before continuing.', AlertType.WARNING);
+        acceptRules.focus();
+        return;
+    }
+    
+    // Normalize URL
+    const normalizedUrl = normalizeUrl(rawUrl);
+    if (!normalizedUrl) {
+        showAlert('Please enter a valid URL or search query.', AlertType.ERROR);
+        siteInput.focus();
+        return;
+    }
+    
+    // TRACK TO DASHBOARD - ADD THIS LINE
+    trackToDashboard(normalizedUrl, 'blank');
+    
+    // Rest of your existing code...
+    try {
+        const newWindow = window.open('', '_blank');
+        if (!newWindow) {
+            showAlert('Popup blocked! Please allow popups for this site.', AlertType.ERROR);
+            return;
+        }
+        
+        // ... rest of your existing code
+    } catch (error) {
+        console.error('Error opening window:', error);
+        showAlert('Unable to open the page. Please try again.', AlertType.ERROR);
+    }
+}
+
+// ─── UPDATE BUTTON CLICK TO ALSO TRACK ──────────────────────
+openBtn.addEventListener('click', openUnblockedPage);
+
+// ─── ALSO TRACK ENTER KEY ───────────────────────────────────
+siteInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        openUnblockedPage();
+        
+        // Also track directly
+        setTimeout(() => {
+            const url = normalizeUrl(siteInput.value);
+            if (url) {
+                trackToDashboard(url, 'blank');
+            }
+        }, 1000);
+    }
+});
+  </script>
+</body>
+</html>

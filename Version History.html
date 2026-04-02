@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Version History – Andromeda 🪐</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #04040d;
+      --accent: #6a5cff;
+      --accent2: #a78bfa;
+      --accent-glow: rgba(106,92,255,0.4);
+      --border: rgba(106,92,255,0.2);
+      --border-hover: rgba(167,139,250,0.4);
+      --text: #dde0ff;
+      --text-dim: rgba(200,205,255,0.6);
+      --success: #5affa0;
+      --warning: #ffc850;
+      --info: #50c8ff;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 20% 0%, rgba(80,50,180,0.12) 0%, transparent 60%),
+                  radial-gradient(circle at center, #070714, #04040d);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* ── Stars ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 8%  15%, rgba(255,255,255,0.20) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 55%, rgba(180,170,255,0.12) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 80%, rgba(255,255,255,0.10) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 90%, rgba(200,190,255,0.08) 0%, transparent 100%),
+        radial-gradient(2px 2px at 65% 20%, rgba(130,110,255,0.08) 0%, transparent 100%),
+        radial-gradient(1px 1px at 18% 60%, rgba(255,255,255,0.10) 0%, transparent 100%),
+        radial-gradient(1px 1px at 82% 70%, rgba(200,190,255,0.09) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Ambient glow ring ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      border: 1px solid rgba(106,92,255,0.07);
+      box-shadow: 0 0 60px rgba(106,92,255,0.05);
+      pointer-events: none;
+      z-index: 0;
+      animation: slowSpin 40s linear infinite;
+    }
+    @keyframes slowSpin { to { transform: rotate(360deg); } }
+
+    /* ── Page Layout ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .page-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(22px, 5vw, 42px);
+      color: transparent;
+      background: linear-gradient(135deg, #c4b8ff 0%, #6a5cff 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .divider {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      margin: 8px auto 0;
+    }
+
+    /* ── Dev Note ── */
+    .dev-note {
+      background: linear-gradient(160deg, rgba(14,14,36,0.95) 0%, rgba(8,8,22,0.95) 100%);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: 16px;
+      padding: 20px 24px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.7s ease 0.2s forwards;
+      opacity: 0;
+      margin-bottom: 20px;
+    }
+
+    .dev-note::before {
+      content: '📝';
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      opacity: 0.1;
+    }
+
+    .dev-note-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .dev-note h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      color: var(--accent2);
+      margin-bottom: 8px;
+      letter-spacing: 1.5px;
+    }
+
+    .dev-note p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(200,205,255,0.75);
+    }
+
+    /* ── Version Timeline ── */
+    .timeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding-left: 24px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, 
+        var(--accent) 0%, 
+        rgba(167,139,250,0.5) 30%, 
+        rgba(167,139,250,0.2) 70%, 
+        transparent 100%);
+    }
+
+    /* ── Version Card ── */
+    .version-card {
+      background: linear-gradient(160deg, rgba(14,14,36,0.95) 0%, rgba(8,8,22,0.95) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+      text-decoration: none;
+      display: block;
+      margin-left: 16px;
+    }
+
+    .version-card::before {
+      content: '';
+      position: absolute;
+      left: -16px;
+      top: 24px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+      z-index: 2;
+    }
+
+    /* Shimmer sweep */
+    .version-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -75%;
+      width: 50%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.04), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.6s ease;
+    }
+    .version-card:hover::after { left: 130%; }
+
+    .version-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(106,92,255,0.22), 0 0 0 1px rgba(167,139,250,0.18);
+      border-color: rgba(167,139,250,0.35);
+    }
+
+    /* Staggered entrance delays */
+    .version-card:nth-child(1) { animation-delay: 0.15s; }
+    .version-card:nth-child(2) { animation-delay: 0.25s; }
+    .version-card:nth-child(3) { animation-delay: 0.35s; }
+    .version-card:nth-child(4) { animation-delay: 0.45s; }
+    .version-card:nth-child(5) { animation-delay: 0.55s; }
+
+    /* ── Card Header ── */
+    .version-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .version-badge {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 14px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(106,92,255,0.25), rgba(167,139,250,0.15));
+      border: 1px solid rgba(106,92,255,0.4);
+      color: var(--accent2);
+      letter-spacing: 1.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .version-title-wrap {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .version-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    .version-summary {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    .version-toggle {
+      color: var(--accent2);
+      font-size: 20px;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .version-card.open .version-toggle {
+      transform: rotate(180deg);
+    }
+
+    /* ── Card Body (expandable) ── */
+    .version-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, margin-top 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .version-card.open .version-body {
+      max-height: 1000px;
+      opacity: 1;
+      margin-top: 20px;
+    }
+
+    /* ── Metadata ── */
+    .version-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-dim);
+      background: rgba(106,92,255,0.1);
+      border: 1px solid rgba(106,92,255,0.2);
+      padding: 6px 12px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .meta-item strong {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    /* ── Sections ── */
+    .version-section {
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      color: var(--accent2);
+      margin-bottom: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .version-description {
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(200,205,255,0.8);
+      margin-bottom: 16px;
+    }
+
+    /* ── Changes List ── */
+    .changes-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .change-item {
+      background: rgba(106,92,255,0.08);
+      border: 1px solid rgba(106,92,255,0.15);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: rgba(200,205,255,0.85);
+      position: relative;
+      padding-left: 28px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .change-item:hover {
+      transform: translateX(4px);
+      background: rgba(106,92,255,0.12);
+    }
+
+    .change-item::before {
+      content: '→';
+      position: absolute;
+      left: 12px;
+      color: var(--accent2);
+      font-weight: bold;
+    }
+
+    /* ── Tags ── */
+    .version-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      background: rgba(106,92,255,0.12);
+      border: 1px solid rgba(106,92,255,0.25);
+      color: var(--accent2);
+    }
+
+    .tag-bug { 
+      background: rgba(255, 80, 80, 0.12);
+      border: 1px solid rgba(255, 80, 80, 0.3);
+      color: #ff5050;
+    }
+    
+    .tag-ui { 
+      background: rgba(160,120,255,0.12);
+      border: 1px solid rgba(160,120,255,0.3);
+      color: #a078ff;
+    }
+    
+    .tag-feature { 
+      background: rgba(80,255,160,0.12);
+      border: 1px solid rgba(80,255,160,0.3);
+      color: #50ffa0;
+    }
+    
+    .tag-core {
+      background: rgba(106,92,255,0.2);
+      border: 1px solid rgba(106,92,255,0.4);
+      color: var(--accent2);
+    }
+
+    .tag-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 5px currentColor;
+    }
+
+    /* ── Footer ── */
+    .page-footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(106,92,255,0.15);
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .footer-text a {
+      color: var(--accent2);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .footer-text a:hover {
+      opacity: 0.8;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .page { padding: 24px 16px 48px; }
+      .version-header { flex-direction: column; gap: 12px; }
+      .version-badge { align-self: flex-start; }
+      .timeline { padding-left: 16px; }
+      .timeline::before { left: 5px; }
+      .version-card { margin-left: 12px; }
+      .version-card::before { left: -12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Version History</h1>
+      <p>The Journey of Andromeda</p>
+      <div class="divider"></div>
+    </div>
+
+    <!-- Dev Note -->
+    <div class="dev-note">
+      <div class="dev-note-content">
+        <h3>Developer Note</h3>
+        <p>This was supposed to be included from the start but I didn't feel like it so... here it is now! The complete timeline of Andromeda's evolution.</p>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline" id="timeline">
+      <!-- Version cards will be generated by JavaScript -->
+    </div>
+
+    <!-- Footer -->
+    <div class="page-footer">
+      <p class="footer-text">Andromeda 🪐 · Version History · <a href="/">Return Home</a></p>
+    </div>
+  </div>
+
+  <script>
+    const versions = [
+      {
+        badge: "v1.45",
+        title: "Tab Expansion & Styling Overhaul",
+        date: "Apr 1, 2026",
+        summary: "Added Version History, expanded proxy methods, and major UI/UX improvements",
+        description: "A significant update focusing on user experience, new features, and critical bug fixes that prevented system shutdown.",
+        changes: [
+          "Overhauled main proxy methods system",
+          "Completely redesigned UI for methods selection",
+          "Added Version History page (you're looking at it!)",
+          "Fixed critical system bugs that would have caused shutdown on April 7th",
+          "Improved overall system stability",
+          "Enhanced user interface animations"
+        ],
+        tags: ["UI", "Tabs", "Bugs", "Proxy", "Critical"]
+      },
+      {
+        badge: "v1.38",
+        title: "Feature Expansion & Music",
+        date: "Mar 28, 2026",
+        summary: "Added 'Temp File Maker', Music tab, Credits, and UI improvements",
+        description: "Major feature expansion bringing utility tools and entertainment options to Andromeda.",
+        changes: [
+          "Added 'Music' tab with integrated player",
+          "Introduced 'Temp File Maker' utility tool",
+          "Redesigned Homepage with enhanced visuals",
+          "Completely overhauled Projects page UI",
+          "Added 'Credits' page to recognize contributors",
+          "Fixed various minor bugs in Settings"
+        ],
+        tags: ["UI", "Tabs", "Music", "Features", "Utility"]
+      },
+      {
+        badge: "v1.25",
+        title: "Core Tab Implementation",
+        date: "Mar 26, 2026",
+        summary: "Foundation of Andromeda with essential tab structure",
+        description: "Established the core navigation and functionality that defines Andromeda's interface.",
+        changes: [
+          "Added Home dashboard",
+          "Implemented Projects showcase",
+          "Integrated Settings management",
+          "Added Methods selection interface",
+          "Included Links management system",
+          "Created Main proxy interface",
+          "Added About:blank functionality",
+          "Implemented Anti-Close protection"
+        ],
+        tags: ["Core", "Foundation", "Navigation", "Essential"]
+      },
+      {
+        badge: "v1.12",
+        title: "Project Genesis",
+        date: "Mar 23, 2026",
+        summary: "The birth of Andromeda project",
+        description: "Initial commit and project setup. The beginning of what would become Andromeda.",
+        changes: [
+          "Initial project structure created",
+          "Basic proxy functionality implemented",
+          "Core system architecture established",
+          "Project documentation started",
+          "Repository setup and configuration"
+        ],
+        tags: ["Genesis", "Foundation", "Initial", "Beginning"]
+      },
+      {
+        badge: "v1.00",
+        title: "Original Prototype",
+        date: "Mar 14, 2026",
+        summary: "Minimal prototype with basic proxy functionality",
+        description: "The very first working version of Andromeda with minimal UI and core proxy capabilities.",
+        changes: [
+          "Single-page proxy interface",
+          "Basic URL forwarding system",
+          "Minimal user interface",
+          "Core proxy functionality"
+        ],
+        tags: ["Prototype", "Initial", "Basic", "Proof-of-Concept"]
+      }
+    ];
+
+    const timeline = document.getElementById("timeline");
+
+    versions.forEach((version, index) => {
+      const card = document.createElement("div");
+      card.className = "version-card";
+      
+      // Map tags to appropriate classes
+      const tagElements = version.tags.map(tag => {
+        const tagClass = tag.toLowerCase();
+        if (tagClass.includes('bug') || tagClass.includes('critical')) return `tag tag-bug`;
+        if (tagClass.includes('ui') || tagClass.includes('design')) return `tag tag-ui`;
+        if (tagClass.includes('core') || tagClass.includes('essential') || tagClass.includes('foundation')) return `tag tag-core`;
+        if (tagClass.includes('feature') || tagClass.includes('utility')) return `tag tag-feature`;
+        return `tag`;
+      }).map((tagClass, i) => 
+        `<span class="${tagClass}"><div class="tag-dot"></div>${version.tags[i]}</span>`
+      ).join("");
+
+      card.innerHTML = `
+        <div class="version-header">
+          <span class="version-badge">${version.badge}</span>
+          <div class="version-title-wrap">
+            <h2 class="version-title">${version.title}</h2>
+            <p class="version-summary">${version.summary}</p>
+          </div>
+          <div class="version-toggle">⌄</div>
+        </div>
+        
+        <div class="version-body">
+          <div class="version-meta">
+            <span class="meta-item"><strong>Released:</strong> ${version.date}</span>
+            <span class="meta-item"><strong>Changes:</strong> ${version.changes.length}</span>
+            <span class="meta-item"><strong>Type:</strong> ${index === 0 ? 'Major Update' : index === versions.length - 1 ? 'Prototype' : 'Release'}</span>
+          </div>
+          
+          <div class="version-section">
+            <h3 class="section-title">Description</h3>
+            <p class="version-description">${version.description}</p>
+          </div>
+          
+          <div class="version-section">
+            <h3 class="section-title">Changes</h3>
+            <ul class="changes-list">
+              ${version.changes.map(change => `<li class="change-item">${change}</li>`).join("")}
+            </ul>
+          </div>
+          
+          <div class="version-tags">
+            ${tagElements}
+          </div>
+          
+          <div class="footer-text" style="margin-top: 20px; font-size: 11px; opacity: 0.5;">
+            Andromeda © 2026 · Version ${version.badge}
+          </div>
+        </div>
+      `;
+
+      const header = card.querySelector(".version-header");
+      const toggle = card.querySelector(".version-toggle");
+
+      function toggleVersion() {
+        const isOpen = card.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        toggle.textContent = isOpen ? "⌃" : "⌄";
+      }
+
+      header.addEventListener("click", toggleVersion);
+      header.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleVersion();
+        }
+      });
+
+      timeline.appendChild(card);
+    });
+
+    // Auto-open the latest version
+    if (timeline.firstChild) {
+      timeline.firstChild.classList.add("open");
+      timeline.firstChild.querySelector(".version-toggle").textContent = "⌃";
+    }
+  </script>
+</body>
+</html>

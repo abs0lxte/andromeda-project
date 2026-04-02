@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temp File / Proxy Maker - Andromeda 🪐</title>
+  <link rel="icon" href="AndromedaLogo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #04040d;
+      --accent: #6a5cff;
+      --accent2: #a78bfa;
+      --accent-glow: rgba(106,92,255,0.4);
+      --border: rgba(106,92,255,0.2);
+      --border-hover: rgba(167,139,250,0.4);
+      --text: #dde0ff;
+      --text-dim: rgba(200,205,255,0.6);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body {
+      min-height: 100%;
+      background: radial-gradient(ellipse at 20% 0%, rgba(80,50,180,0.12) 0%, transparent 60%),
+                  radial-gradient(circle at center, #070714, #04040d);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* ── Stars ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 8%  15%, rgba(255,255,255,0.20) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 55%, rgba(180,170,255,0.12) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 80%, rgba(255,255,255,0.10) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 90%, rgba(200,190,255,0.08) 0%, transparent 100%),
+        radial-gradient(2px 2px at 65% 20%, rgba(130,110,255,0.08) 0%, transparent 100%),
+        radial-gradient(1px 1px at 18% 60%, rgba(255,255,255,0.10) 0%, transparent 100%),
+        radial-gradient(1px 1px at 82% 70%, rgba(200,190,255,0.09) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Ambient glow ring ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      border: 1px solid rgba(106,92,255,0.07);
+      box-shadow: 0 0 60px rgba(106,92,255,0.05);
+      pointer-events: none;
+      z-index: 0;
+      animation: slowSpin 40s linear infinite;
+    }
+    @keyframes slowSpin { to { transform: rotate(360deg); } }
+
+    /* ── Page Layout ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 36px 24px 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .page-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(22px, 5vw, 38px);
+      color: transparent;
+      background: linear-gradient(135deg, #c4b8ff 0%, #6a5cff 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .page-header p {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      margin: 4px auto 0;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: linear-gradient(160deg, rgba(14,14,36,0.95) 0%, rgba(8,8,22,0.95) 100%);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 16px;
+      padding: 24px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.2s forwards;
+    }
+
+    /* Shimmer sweep */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -75%;
+      width: 50%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.04), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.6s ease;
+    }
+    .card:hover::before { left: 130%; }
+
+    /* Top edge glow on hover */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px; right: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover::after { opacity: 1; }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(106,92,255,0.22), 0 0 0 1px rgba(167,139,250,0.18);
+      border-color: rgba(167,139,250,0.35);
+      border-left-color: var(--accent2);
+    }
+
+    .card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(14px, 2.5vw, 18px);
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: rgba(200,205,255,0.72);
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+
+    /* ── Input Fields ── */
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      outline: none;
+      margin-top: 10px;
+      background: rgba(8,8,22,0.6);
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+      transition: 0.2s;
+    }
+    input:focus {
+      background: rgba(14,14,36,0.8);
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(106,92,255,0.3);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      margin-top: 15px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(106,92,255,0.3);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(106,92,255,0.5);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .hidden { display: none; }
+
+    /* ── Output / Code Area ── */
+    .output {
+      margin-top: 15px;
+      background: rgba(4,4,13,0.8);
+      padding: 20px;
+      border-radius: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 400px;
+      overflow-y: auto;
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+      color: #b8c0ff;
+      border: 1px solid var(--border);
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    /* ── Tips Container ── */
+    .tips-container {
+      background: rgba(106,92,255,0.08);
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(106,92,255,0.15);
+      color: var(--text-dim);
+      font-weight: 500;
+      text-align: center;
+      font-size: 14px;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+      opacity: 0;
+    }
+
+    .tips-container span {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 48px; }
+      .card { padding: 18px 20px; }
+      .btn-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Proxy Maker</h1>
+      <p>Transform GitHub TXT links into live proxy HTML files</p>
+      <div class="divider"></div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+      <h2>📡 Generator</h2>
+      <p>Input your GitHub raw TXT link below:</p>
+      <input type="text" id="githubLink" placeholder="Enter GitHub TXT Link">
+      <button class="btn" onclick="generate()">Generate Proxy</button>
+
+      <div id="resultSection" class="hidden">
+        <div class="btn-group">
+          <button class="btn" onclick="copyCode()">📋 Copy</button>
+          <button class="btn" onclick="downloadCode()">💾 Download</button>
+          <button class="btn" onclick="obfuscate()">🔒 Obfuscate</button>
+        </div>
+
+        <div class="output" id="outputCode"></div>
+      </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="tips-container" id="tipsContainer"></div>
+
+  </div>
+
+<script>
+// =========================
+// VARIABLES
+// =========================
+const githubLink = document.getElementById('githubLink');
+const resultSection = document.getElementById('resultSection');
+const outputCode = document.getElementById('outputCode');
+const tipsContainer = document.getElementById('tipsContainer');
+
+const tips = [
+  "Keep your projects organized",
+  "Test proxies locally first",
+  "Always validate input URLs",
+  "Avoid huge files for speed",
+  "Use browser console for debugging",
+  "Refresh often to see changes",
+  "Add animations for better UX",
+  "Comment your code clearly",
+  "Use unique icons/logos for branding",
+  "Experiment with colors and glow effects"
+];
+
+function showRandomTip() {
+  const tip = tips[Math.floor(Math.random()*tips.length)];
+  tipsContainer.innerHTML = `💡 Tip: <span>${tip}</span>`;
+}
+showRandomTip();
+setInterval(showRandomTip, 9000);
+
+// =========================
+// FUNCTIONS
+// =========================
+function generate() {
+  const link = githubLink.value.trim();
+  if(!link) { alert("Enter a valid GitHub TXT link"); return; }
+
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+  <title>Andromeda 🪐 Proxy</title>
+  <link rel="icon" href="AndromedaLogo.png">
+  <style>
+    html,body,iframe{margin:0;padding:0;height:100%;border:none;}
+    iframe{width:100%;height:100%;border:none;}
+    .rainbow-text{
+      position:fixed;top:15px;right:15px;z-index:1000;font-family:Arial,sans-serif;
+      font-size:18px;font-weight:bold;text-shadow:1px 1px 2px rgba(0,0,0,0.3);
+      animation:rainbow 3s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes rainbow {
+      0%{color:#FF7F00;}14%{color:#FF5500;}28%{color:#FF2200;}42%{color:#9900CC;}
+      57%{color:#6600FF;}71%{color:#0033FF;}85%{color:#00FFFF;}100%{color:#FF7F00;}
+    }
+  </style>
+</head>
+<body>
+<div class="rainbow-text">anti unblocker by abs0lute 😴</div>
+<iframe id="siteFrame" src=""></iframe>
+<script>
+window.addEventListener('beforeunload', e=>{e.preventDefault();e.returnValue='';});
+fetch('${link}').then(r=>r.text()).then(url=>{document.getElementById('siteFrame').src=url.trim();}).catch(e=>console.error(e));
+<\/script>
+</body>
+</html>`;
+
+  outputCode.textContent = html;
+  resultSection.classList.remove('hidden');
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(outputCode.textContent);
+  alert("✅ Copied to clipboard!");
+}
+
+function downloadCode() {
+  const blob = new Blob([outputCode.textContent], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = "andromeda-proxy.html";
+  a.click();
+}
+
+function obfuscate() {
+  window.open("https://www.infyways.com/tools/html-obfuscator/","_blank");
+}
+</script>
+</body>
+</html>

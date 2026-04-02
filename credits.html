@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credits – Andromeda 🪐</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #04040d;
+      --accent: #6a5cff;
+      --accent2: #a78bfa;
+      --accent-glow: rgba(106,92,255,0.4);
+      --border: rgba(106,92,255,0.2);
+      --border-hover: rgba(167,139,250,0.4);
+      --text: #dde0ff;
+      --text-dim: rgba(200,205,255,0.6);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 20% 0%, rgba(80,50,180,0.12) 0%, transparent 60%),
+                  radial-gradient(circle at center, #070714, #04040d);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* ── Stars ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 8%  15%, rgba(255,255,255,0.20) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 55%, rgba(180,170,255,0.12) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 80%, rgba(255,255,255,0.10) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 90%, rgba(200,190,255,0.08) 0%, transparent 100%),
+        radial-gradient(2px 2px at 65% 20%, rgba(130,110,255,0.08) 0%, transparent 100%),
+        radial-gradient(1px 1px at 18% 60%, rgba(255,255,255,0.10) 0%, transparent 100%),
+        radial-gradient(1px 1px at 82% 70%, rgba(200,190,255,0.09) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Ambient glow ring ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      border: 1px solid rgba(106,92,255,0.07);
+      box-shadow: 0 0 60px rgba(106,92,255,0.05);
+      pointer-events: none;
+      z-index: 0;
+      animation: slowSpin 40s linear infinite;
+    }
+    @keyframes slowSpin { to { transform: rotate(360deg); } }
+
+    /* ── Page Layout ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .page-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(22px, 5vw, 42px);
+      color: transparent;
+      background: linear-gradient(135deg, #c4b8ff 0%, #6a5cff 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .divider {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      margin: 8px auto 0;
+    }
+
+    /* ── Count Badge ── */
+    .credits-count {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      animation: fadeUp 0.7s ease 0.1s forwards;
+      opacity: 0;
+    }
+
+    .count-badge {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      background: rgba(106,92,255,0.12);
+      border: 1px solid rgba(106,92,255,0.25);
+      padding: 5px 14px;
+      border-radius: 20px;
+    }
+
+    /* ── Credits Cards Grid ── */
+    .credits-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── Individual Card ── */
+    .credit-card {
+      background: linear-gradient(160deg, rgba(14,14,36,0.95) 0%, rgba(8,8,22,0.95) 100%);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 16px;
+      padding: 28px 32px;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Shimmer sweep */
+    .credit-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -75%;
+      width: 50%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.04), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.6s ease;
+    }
+    .credit-card:hover::before { left: 130%; }
+
+    /* Top edge glow on hover */
+    .credit-card::after {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px; right: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .credit-card:hover::after { opacity: 1; }
+
+    .credit-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(106,92,255,0.22), 0 0 0 1px rgba(167,139,250,0.18);
+      border-color: rgba(167,139,250,0.35);
+      border-left-color: var(--accent2);
+    }
+
+    /* Staggered entrance delays */
+    .credit-card:nth-child(1) { animation-delay: 0.10s; }
+    .credit-card:nth-child(2) { animation-delay: 0.18s; }
+    .credit-card:nth-child(3) { animation-delay: 0.26s; }
+    .credit-card:nth-child(4) { animation-delay: 0.34s; }
+    .credit-card:nth-child(5) { animation-delay: 0.42s; }
+    .credit-card:nth-child(6) { animation-delay: 0.50s; }
+
+    /* ── Card Inner Layout ── */
+    .credit-header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 12px;
+    }
+
+    .credit-icon {
+      width: 50px; height: 50px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(106,92,255,0.28), rgba(167,139,250,0.14));
+      border: 1px solid rgba(106,92,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      box-shadow: 0 0 18px rgba(106,92,255,0.22);
+    }
+
+    .credit-title-wrap { flex: 1; }
+
+    .credit-card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(16px, 2.5vw, 20px);
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: 1.2px;
+      margin-bottom: 4px;
+    }
+
+    .credit-meta {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .credit-desc {
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(200,205,255,0.75);
+      font-weight: 400;
+      margin-bottom: 16px;
+      max-width: 600px;
+    }
+
+    /* ── Tags ── */
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      background: rgba(106,92,255,0.12);
+      border: 1px solid rgba(106,92,255,0.25);
+      color: var(--accent2);
+    }
+
+    .tag-core { 
+      background: rgba(106,92,255,0.2);
+      border: 1px solid rgba(106,92,255,0.4);
+      color: #a78bfa;
+    }
+    
+    .tag-backend {
+      background: rgba(80,200,255,0.12);
+      border: 1px solid rgba(80,200,255,0.3);
+      color: #50c8ff;
+    }
+    
+    .tag-ai {
+      background: rgba(255,200,80,0.12);
+      border: 1px solid rgba(255,200,80,0.3);
+      color: #ffc850;
+    }
+    
+    .tag-ui {
+      background: rgba(160,120,255,0.12);
+      border: 1px solid rgba(160,120,255,0.3);
+      color: #a078ff;
+    }
+    
+    .tag-system {
+      background: rgba(80,255,160,0.12);
+      border: 1px solid rgba(80,255,160,0.3);
+      color: #50ffa0;
+    }
+    
+    .tag-foundation {
+      background: rgba(255,120,200,0.12);
+      border: 1px solid rgba(255,120,200,0.3);
+      color: #ff78c8;
+    }
+
+    .tag-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 5px currentColor;
+    }
+
+    /* ── Role specific styling ── */
+    .role-owner .credit-icon { background: linear-gradient(135deg, rgba(167,139,250,0.4), rgba(106,92,255,0.2)); }
+    .role-system .credit-icon { background: linear-gradient(135deg, rgba(80,255,160,0.4), rgba(80,200,255,0.2)); }
+    .role-framework .credit-icon { background: linear-gradient(135deg, rgba(255,120,200,0.4), rgba(255,200,80,0.2)); }
+    .role-ai .credit-icon { background: linear-gradient(135deg, rgba(255,200,80,0.4), rgba(255,120,80,0.2)); }
+
+    /* ── Footer ── */
+    .page-footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(106,92,255,0.15);
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .footer-text a {
+      color: var(--accent2);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .footer-text a:hover {
+      opacity: 0.8;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 48px; }
+      .credit-card { padding: 20px 22px; }
+      .credit-header { gap: 12px; }
+      .credit-icon { width: 42px; height: 42px; font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Credits</h1>
+      <p>The creative minds & tools powering Andromeda</p>
+      <div class="divider"></div>
+    </div>
+
+    <!-- Count badge -->
+    <div class="credits-count">
+      <div class="count-badge">4 Contributors</div>
+    </div>
+
+    <!-- Credits Grid -->
+    <div class="credits-grid" id="creditsGrid">
+      <!-- Cards will be generated by JavaScript -->
+    </div>
+
+    <!-- Footer -->
+    <div class="page-footer">
+      <p class="footer-text">Andromeda 🪐 · Built with passion · <a href="/">Return Home</a></p>
+    </div>
+  </div>
+
+  <script>
+    const credits = [
+      { 
+        name: "abs0lute", 
+        role: "Owner & Lead Developer", 
+        desc: "Creator and main developer of Andromeda. Handles core system architecture, UI/UX design, and feature implementation.",
+        tags: ["Core", "UI", "System"],
+        icon: "👑",
+        type: "person"
+      },
+      { 
+        name: "Sunset Redirector", 
+        role: "Proxy System", 
+        desc: "Robust proxy routing system that powers Andromeda's unblocking capabilities with efficient request handling.",
+        tags: ["Backend", "Routing", "Proxy"],
+        icon: "🔀",
+        type: "system"
+      },
+      { 
+        name: "Sunset Framework", 
+        role: "Base Framework", 
+        desc: "Original foundation upon which Andromeda was built. Provides core structure and fundamental components.",
+        tags: ["Core", "Foundation", "Legacy"],
+        icon: "🌅",
+        type: "framework"
+      },
+      { 
+        name: "OpenAI", 
+        role: "AI Intelligence", 
+        desc: "Provides artificial intelligence capabilities and assistance throughout the development process.",
+        tags: ["AI", "Support", "Development"],
+        icon: "🤖",
+        type: "ai"
+      },
+    { 
+  name: "Hangzhou DeepSeek Artificial Intelligence Co., Ltd.",
+  role: "AI Intelligence Partner",
+  desc: "Serving as an AI Intelligence Partner, developing advanced AI solutions with applications in search, natural language processing, and automation.",
+  tags: ["AI", "Machine Learning", "R&D"],
+  icon: "🤖",
+  type: "partner"
+},
+{ 
+  name: "Claude",
+  role: "AI Intelligence Partner",
+  desc: "Assisting the framework with advanced conversational AI and natural language understanding capabilities, enhancing its functionality and intelligence.",
+  tags: ["AI", "Conversational AI", "NLP", "Framework Support"],
+  icon: "🧠",
+  type: "partner"
+},
+      { 
+        name: "GitHub Community", 
+        role: "Open Source Tools", 
+        desc: "Various open-source libraries and tools that enhance functionality and development workflow.",
+        tags: ["Tools", "Libraries", "OSS"],
+        icon: "📦",
+        type: "community"
+      },
+   { 
+        name: "Vercel", 
+        role: "Deployment Platform", 
+        desc: "Hosting and deployment infrastructure ensuring reliable uptime and performance.",
+        tags: ["Hosting", "Infrastructure"],
+        icon: "🚀",
+        type: "platform"
+      }    ];
+
+    const grid = document.getElementById("creditsGrid");
+
+    credits.forEach((credit, index) => {
+      const card = document.createElement("div");
+      card.className = `credit-card role-${credit.type}`;
+      
+      // Create appropriate tag classes based on tag content
+      const tagElements = credit.tags.map(tag => {
+        const tagClass = tag.toLowerCase().replace(/[^a-z]/g, '');
+        return `<span class="tag tag-${tagClass}"><div class="tag-dot"></div>${tag}</span>`;
+      }).join("");
+
+      card.innerHTML = `
+        <div class="credit-header">
+          <div class="credit-icon">${credit.icon}</div>
+          <div class="credit-title-wrap">
+            <h2>${credit.name}</h2>
+            <div class="credit-meta">${credit.role}</div>
+          </div>
+        </div>
+        <p class="credit-desc">${credit.desc}</p>
+        <div class="tags-container">
+          ${tagElements}
+        </div>
+      `;
+
+      // Add hover effect enhancement
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-5px)';
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
+      });
+
+      grid.appendChild(card);
+    });
+
+    // Update count badge
+    document.querySelector('.count-badge').textContent = `${credits.length} Contributors`;
+  </script>
+</body>
+</html>

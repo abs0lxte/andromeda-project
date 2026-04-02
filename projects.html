@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects – Andromeda 🪐</title>
+  <link rel="icon" href="AndromedaLogo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #04040d;
+      --accent: #6a5cff;
+      --accent2: #a78bfa;
+      --accent-glow: rgba(106,92,255,0.4);
+      --border: rgba(106,92,255,0.2);
+      --border-hover: rgba(167,139,250,0.4);
+      --text: #dde0ff;
+      --text-dim: rgba(200,205,255,0.6);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body {
+      min-height: 100%;
+      background: radial-gradient(ellipse at 20% 0%, rgba(80,50,180,0.12) 0%, transparent 60%),
+                  radial-gradient(circle at center, #070714, #04040d);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* ── Stars ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 8%  15%, rgba(255,255,255,0.20) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 55%, rgba(180,170,255,0.12) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 80%, rgba(255,255,255,0.10) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 90%, rgba(200,190,255,0.08) 0%, transparent 100%),
+        radial-gradient(2px 2px at 65% 20%, rgba(130,110,255,0.08) 0%, transparent 100%),
+        radial-gradient(1px 1px at 18% 60%, rgba(255,255,255,0.10) 0%, transparent 100%),
+        radial-gradient(1px 1px at 82% 70%, rgba(200,190,255,0.09) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Ambient glow ring ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      border: 1px solid rgba(106,92,255,0.07);
+      box-shadow: 0 0 60px rgba(106,92,255,0.05);
+      pointer-events: none;
+      z-index: 0;
+      animation: slowSpin 40s linear infinite;
+    }
+    @keyframes slowSpin { to { transform: rotate(360deg); } }
+
+    /* ── Page Layout ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 36px 24px 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .page-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(22px, 5vw, 38px);
+      color: transparent;
+      background: linear-gradient(135deg, #c4b8ff 0%, #6a5cff 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .page-header p {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      margin: 4px auto 0;
+    }
+
+    /* ── Project Count Badge ── */
+    .project-count {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      animation: fadeUp 0.7s ease 0.1s forwards;
+      opacity: 0;
+    }
+
+    .count-badge {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      background: rgba(106,92,255,0.12);
+      border: 1px solid rgba(106,92,255,0.25);
+      padding: 5px 14px;
+      border-radius: 20px;
+    }
+
+    /* ── Project Cards Grid ── */
+    .projects-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── Individual Card ── */
+    .card {
+      background: linear-gradient(160deg, rgba(14,14,36,0.95) 0%, rgba(8,8,22,0.95) 100%);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 16px;
+      padding: 24px 28px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Shimmer sweep */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -75%;
+      width: 50%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.04), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.6s ease;
+    }
+    .card:hover::before { left: 130%; }
+
+    /* Top edge glow on hover */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px; right: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover::after { opacity: 1; }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(106,92,255,0.22), 0 0 0 1px rgba(167,139,250,0.18);
+      border-color: rgba(167,139,250,0.35);
+      border-left-color: var(--accent2);
+    }
+
+    /* Staggered entrance delays */
+    .card:nth-child(1) { animation-delay: 0.10s; }
+    .card:nth-child(2) { animation-delay: 0.18s; }
+    .card:nth-child(3) { animation-delay: 0.26s; }
+    .card:nth-child(4) { animation-delay: 0.34s; }
+    .card:nth-child(5) { animation-delay: 0.42s; }
+
+    /* ── Card Inner Layout ── */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, rgba(106,92,255,0.28), rgba(167,139,250,0.14));
+      border: 1px solid rgba(106,92,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      box-shadow: 0 0 14px rgba(106,92,255,0.18);
+    }
+
+    .card-title-wrap { flex: 1; }
+
+    .card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(13px, 2.5vw, 16px);
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: 1.5px;
+      margin-bottom: 3px;
+    }
+
+    .card-meta {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .card p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: rgba(200,205,255,0.72);
+      font-weight: 400;
+    }
+
+    /* ── Status Tag ── */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 12px;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+    .tag-active {
+      background: rgba(90,255,160,0.1);
+      border: 1px solid rgba(90,255,160,0.3);
+      color: #5affa0;
+    }
+    .tag-legacy {
+      background: rgba(106,92,255,0.1);
+      border: 1px solid rgba(106,92,255,0.3);
+      color: var(--accent2);
+    }
+    .tag-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 5px currentColor;
+    }
+
+    /* ── External link indicator ── */
+    .card-arrow {
+      position: absolute;
+      top: 20px; right: 22px;
+      font-size: 14px;
+      color: rgba(167,139,250,0.25);
+      transition: color 0.2s, transform 0.2s;
+    }
+    .card:hover .card-arrow {
+      color: var(--accent2);
+      transform: translate(2px, -2px);
+    }
+
+    /* ── Non-clickable card (current project) ── */
+    .card.no-link {
+      cursor: default;
+    }
+    .card.no-link:hover {
+      transform: none;
+      box-shadow: 0 0 20px rgba(106,92,255,0.12);
+    }
+    .card.no-link::before { display: none; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 48px; }
+      .card { padding: 18px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Projects</h1>
+      <p>What we've built</p>
+      <div class="divider"></div>
+    </div>
+
+    <!-- Count badge -->
+    <div class="project-count">
+      <div class="count-badge">3 Projects</div>
+    </div>
+
+    <!-- Cards -->
+    <div class="projects-grid">
+
+      <!-- Sunset -->
+      <div class="card" onclick="window.open('https://sites.google.com/bbrook.k12.nj.us/sunset/sunset','_blank')" role="link" tabindex="0"
+           onkeydown="if(event.key==='Enter')window.open('https://sites.google.com/bbrook.k12.nj.us/sunset/sunset','_blank')">
+        <div class="card-arrow">↗</div>
+        <div class="card-header">
+          <div class="card-icon">🌅</div>
+          <div class="card-title-wrap">
+            <h2>Sunset</h2>
+            <div class="card-meta">Early Project</div>
+          </div>
+        </div>
+        <p>An earlier project — check it out and see where it all started.</p>
+        <div class="tag tag-legacy"><div class="tag-dot"></div>Legacy</div>
+      </div>
+
+      <!-- Sunset Redirector -->
+      <div class="card" onclick="window.open('https://sites.google.com/bbrook.k12.nj.us/sunset/sunset','_blank')" role="link" tabindex="0"
+           onkeydown="if(event.key==='Enter')window.open('https://sites.google.com/bbrook.k12.nj.us/sunset/sunset','_blank')">
+        <div class="card-arrow">↗</div>
+        <div class="card-header">
+          <div class="card-icon">🔀</div>
+          <div class="card-title-wrap">
+            <h2>Sunset Redirector</h2>
+            <div class="card-meta">Passion Project · ~2 Years Ago</div>
+          </div>
+        </div>
+        <p>An old passion project from nearly two years ago — a redirector built with a lot of enthusiasm and even more trial and error.</p>
+        <div class="tag tag-legacy"><div class="tag-dot"></div>Legacy</div>
+      </div>
+
+      <!-- Andromeda (current, not clickable) -->
+      <div class="card no-link" role="article">
+        <div class="card-header">
+          <div class="card-icon">🪐</div>
+          <div class="card-title-wrap">
+            <h2>Andromeda</h2>
+            <div class="card-meta">Current Project</div>
+          </div>
+        </div>
+        <p>You're using it right now! Andromeda is the hub — a fully custom interface with proxy methods, music, links, a boot sequence, and more.</p>
+        <div class="tag tag-active"><div class="tag-dot"></div>Active</div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

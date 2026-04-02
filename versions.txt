@@ -1,0 +1,70 @@
+ {
+        badge: "v1.45",
+        title: "Tab + Styling",
+        date: "Apr 1, 26",
+        summary: "Added Version History, Expanded Main Proxy Methods + UI/UX",
+        description: "This added multiple new bug fixes and tabs along with UI changes.",
+        changes: [
+          "Changed Main Proxy Methods",
+          "Changed UI For Methods",
+          "Added Version History",
+          "Fixed MAJOR Bugs with the system whcih if not touched would cause a shutdown on Apr, 7th."
+        ],
+        tags: ["UI", "Tabs", "Bugs", "Proxy Changes"]
+      },
+      {
+        badge: "v1.38",
+        title: "Tab Expansion + New UI",
+        date: "Mar 28th, 26",
+        summary: "Added 'Temp File Maker' and UI Changes with the Homepage + Projects. Also added 'Music' and 'Credits' Tab Aswell.",
+        description: "This update focused on Improving visibility and minor bugs in mostly Settings, along with new useful tabs for those who want to use them.",
+        changes: [
+          "Added 'Music'",
+          "Added 'Temp File Maker'",
+          "Changed Homepage + Projects UI",
+          "Minor Bugs with Settings"
+        ],
+        tags: ["UI", "Tabs", "Music", "Minor Bugs"]
+      },
+      {
+        badge: "v1.25",
+        title: "UI Changes and Tabs Added",
+        date: "Mar 26, 26",
+        summary: "Added every tab you see up until v1.38",
+        description: "Added every Tab except for Version History, Music, and Temp File Maker.",
+        changes: [
+          "Added Home",
+          "Added Projects",
+          "Added Settings",
+          "Added Methods",
+          "Added Links",
+          "Added Main",
+          "Added About:blank",
+          "Added Anti-Close"
+        ],
+        tags: ["Tabs", "First", "Beginning"]
+      },
+      {
+            {
+        badge: "v1.12",
+        title: "Started",
+        date: "Mar 23, 26",
+        summary: "Start",
+        description: "Started the Andromeda Project",
+        changes: [
+          "Added Everything"
+        ],
+        tags: ["Everything ", "First", "Beginning"]
+      },
+      {
+        badge: "v1.00",
+        title: "Original",
+        date: "Mar 14, 26",
+        summary: "Main tab with less UI/UX and One file.",
+        description: "Just main tab nothing else.",
+        changes: [
+          "Nothing"
+        ],
+        tags: ["Main Proxy"]
+      }
+    ];

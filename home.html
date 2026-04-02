@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home – Andromeda 🪐</title>
+  <link rel="icon" href="AndromedaLogo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #04040d;
+      --bg-panel: rgba(10,11,28,0.82);
+      --accent: #6a5cff;
+      --accent2: #a78bfa;
+      --accent-glow: rgba(106,92,255,0.4);
+      --border: rgba(106,92,255,0.2);
+      --border-hover: rgba(167,139,250,0.4);
+      --text: #dde0ff;
+      --text-dim: rgba(200,205,255,0.6);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body {
+      min-height: 100%;
+      background: radial-gradient(ellipse at 20% 0%, rgba(80,50,180,0.12) 0%, transparent 60%),
+                  radial-gradient(circle at center, #070714, #04040d);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Stars */
+    body::before {
+      content:'';
+      position:fixed;
+      inset:0;
+      background-image:
+        radial-gradient(1px 1px at 8% 15%, rgba(255,255,255,0.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 55%, rgba(180,170,255,0.12) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 80%, rgba(255,255,255,0.1) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 90%, rgba(200,190,255,0.08) 0%, transparent 100%),
+        radial-gradient(2px 2px at 65% 20%, rgba(130,110,255,0.08) 0%, transparent 100%);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    /* Orbiting ring decoration */
+    body::after {
+      content:'';
+      position:fixed;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      border-radius:50%;
+      border: 1px solid rgba(106,92,255,0.07);
+      box-shadow: 0 0 60px rgba(106,92,255,0.05);
+      pointer-events:none;
+      z-index:0;
+      animation: slowSpin 40s linear infinite;
+    }
+    @keyframes slowSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      animation: fadeUp 0.7s ease forwards;
+    }
+
+    .page-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(22px, 5vw, 36px);
+      color: transparent;
+      background: linear-gradient(135deg, #c4b8ff 0%, #6a5cff 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .page-header p {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      margin: 4px auto 0;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: linear-gradient(160deg, rgba(14,14,36,0.95) 0%, rgba(8,8,22,0.95) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      animation: fadeUp 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .card::before {
+      content:'';
+      position:absolute;
+      top:-1px; left:-1px; right:-1px;
+      height:2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(106,92,255,0.18), 0 0 0 1px rgba(167,139,250,0.15);
+      border-color: rgba(167,139,250,0.25);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(106,92,255,0.3), rgba(167,139,250,0.15));
+      border: 1px solid rgba(106,92,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 0 12px rgba(106,92,255,0.2);
+    }
+
+    .card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(200,205,255,0.75);
+      font-weight: 400;
+    }
+
+    /* ── Fact / Time Card ── */
+    .fact-card {
+      background: linear-gradient(135deg, rgba(80,60,180,0.12) 0%, rgba(14,14,36,0.95) 40%);
+      border: 1px solid rgba(106,92,255,0.25);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      animation: fadeUp 0.7s ease 0.1s forwards;
+      opacity: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fact-card::after {
+      content:'🪐';
+      position: absolute;
+      right: 20px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 48px;
+      opacity: 0.07;
+      pointer-events:none;
+    }
+
+    .fact-card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(167,139,250,0.55);
+      margin-bottom: 10px;
+    }
+
+    #factTime {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    #liveTime {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      color: rgba(106,92,255,0.7);
+      letter-spacing: 2px;
+      margin-top: 8px;
+    }
+
+    /* ── Tip Card ── */
+    .tip-card {
+      background: linear-gradient(135deg, rgba(14,14,36,0.95), rgba(30,20,60,0.5));
+      border: 1px solid rgba(167,139,250,0.15);
+      border-radius: 16px;
+      padding: 20px 24px;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+      opacity: 0;
+      position: relative;
+    }
+
+    .tip-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      background: rgba(106,92,255,0.12);
+      border: 1px solid rgba(106,92,255,0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    #tip {
+      font-size: 14px;
+      color: rgba(210,215,255,0.8);
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    /* ── Quick Links ── */
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .link-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(106,92,255,0.14);
+      padding: 12px 14px;
+      border-radius: 10px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .link-item:hover {
+      background: rgba(106,92,255,0.12);
+      border-color: rgba(167,139,250,0.3);
+      color: #fff;
+      transform: translateX(3px);
+      box-shadow: 0 0 12px rgba(106,92,255,0.15);
+    }
+
+    .link-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ── Status ── */
+    #status {
+      font-size: 14px;
+      font-weight: 600;
+      color: #5affa0;
+      letter-spacing: 0.5px;
+    }
+    #status.loading { color: rgba(255,180,60,0.8); }
+    #status.error   { color: rgba(255,80,80,0.8); }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #5affa0;
+      box-shadow: 0 0 8px #5affa0;
+      margin-right: 8px;
+      animation: blink 2s ease-in-out infinite;
+    }
+    .status-dot.loading { background: rgba(255,180,60,0.8); box-shadow: 0 0 8px rgba(255,180,60,0.5); }
+    .status-dot.error   { background: rgba(255,80,80,0.8); box-shadow: 0 0 8px rgba(255,80,80,0.5); animation: none; }
+    @keyframes blink {
+      0%,100% { opacity:1; }
+      50%      { opacity:0.3; }
+    }
+
+    /* ── Two-col layout for bottom cards ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media(max-width: 600px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(14px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.12s; }
+    .card:nth-child(3) { animation-delay: 0.18s; }
+    .card:nth-child(4) { animation-delay: 0.24s; }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Andromeda</h1>
+      <p>Mission Control</p>
+      <div class="divider"></div>
+    </div>
+
+    <!-- Cosmic Fact -->
+    <div class="fact-card">
+      <h2>Space Fact of the Second</h2>
+      <div id="factTime">Loading cosmic data...</div>
+      <div id="liveTime"></div>
+    </div>
+
+    <!-- Tip of the Day -->
+    <div class="tip-card">
+      <div class="tip-badge">✦ Tip of the Day</div>
+      <div id="tip">Loading tip...</div>
+    </div>
+
+    <!-- Quick Links + Status -->
+    <div class="two-col">
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <h2>Quick Links</h2>
+        <div class="links-grid">
+          <a class="link-item" href="https://sites.google.com/bbrook.k12.nj.us/andromeda/andromeda" target="_blank">
+            <div class="link-dot"></div>Main Site
+          </a>
+          <a class="link-item" href="credits.html" target="_blank">
+            <div class="link-dot"></div>Credits
+          </a>
+          <a class="link-item" href="Version History.html" target="_blank">
+            <div class="link-dot"></div>Version History
+          </a>
+          <a class="link-item" href="projects.html" target="_blank">
+            <div class="link-dot"></div>Projects
+          </a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">📡</div>
+        <h2>System Status</h2>
+        <p>
+          <span class="status-dot loading" id="statusDot"></span>
+          <span id="status" class="loading">Checking status...</span>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ── Cosmic Facts ──────────────────────────────────────
+    const cosmicFacts = [
+      "The Andromeda Galaxy is 2.5 million light-years away.",
+      "Neutron stars can spin 600 times per second.",
+      "Light from the Sun takes ~8 minutes to reach Earth.",
+      "There are more stars in the universe than grains of sand on Earth.",
+      "Jupiter has at least 95 known moons.",
+      "Venus rotates backwards compared to most planets.",
+      "Black holes emit radiation known as Hawking Radiation.",
+      "A day on Mercury is longer than its year.",
+      "Saturn's rings are made mostly of ice particles.",
+      "The observable universe is roughly 93 billion light-years in diameter.",
+      "Sound cannot travel through the vacuum of space.",
+      "One million Earths could fit inside the Sun.",
+      "The Milky Way moves at 2.1 million km/h through space."
+    ];
+
+    const factEl = document.getElementById('factTime');
+    const timeEl = document.getElementById('liveTime');
+    let lastFact = -1;
+
+    function updateFact() {
+      let idx;
+      do { idx = Math.floor(Math.random() * cosmicFacts.length); } while (idx === lastFact);
+      lastFact = idx;
+      factEl.textContent = cosmicFacts[idx];
+    }
+
+    function updateTime() {
+      const now = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour12: true });
+      timeEl.textContent = now + ' EST';
+    }
+
+    updateFact();
+    updateTime();
+    setInterval(updateTime, 1000);
+    setInterval(updateFact, 8000);
+
+    // ── Tips ─────────────────────────────────────────────
+    const tips = [
+      "Try using Shadow for hidden files.",
+      "Check your proxy settings often.",
+      "Remember: Save often!",
+      "Stretch every 45 minutes to keep your mind sharp.",
+      "Use keyboard shortcuts to save time.",
+      "Drink water — hydration is key.",
+      "Label your files clearly.",
+      "A short break improves focus.",
+      "Organize tabs to avoid chaos.",
+      "Keep a to-do list visible.",
+      "Update software regularly.",
+      "Cosmic music improves coding flow.",
+      "Double-check before submitting work.",
+      "Remember to smile every day."
+    ];
+
+    const tipEl = document.getElementById('tip');
+    let lastTip = -1;
+
+    function updateTip() {
+      let idx;
+      do { idx = Math.floor(Math.random() * tips.length); } while (idx === lastTip);
+      lastTip = idx;
+      tipEl.style.opacity = 0;
+      setTimeout(() => {
+        tipEl.textContent = tips[idx];
+        tipEl.style.transition = 'opacity 0.5s';
+        tipEl.style.opacity = 1;
+      }, 250);
+    }
+
+    updateTip();
+    setInterval(updateTip, 15000);
+
+    // ── Status ───────────────────────────────────────────
+    const statusEl  = document.getElementById('status');
+    const statusDot = document.getElementById('statusDot');
+    const statusURL = 'https://raw.githubusercontent.com/abs0lxte/schoolprylinkstemp/refs/heads/main/status.txt';
+
+    fetch(statusURL)
+      .then(r => { if (!r.ok) throw new Error(); return r.text(); })
+      .then(text => {
+        const msg = text.trim();
+        statusEl.textContent = msg || 'All systems operational.';
+        statusEl.className   = '';
+        statusDot.className  = 'status-dot';
+      })
+      .catch(() => {
+        statusEl.textContent = 'All systems operational.';
+        statusEl.className   = '';
+        statusDot.className  = 'status-dot';
+      });
+  </script>
+</body>
+</html>
