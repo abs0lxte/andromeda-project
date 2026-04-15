@@ -1,0 +1,16 @@
+{
+  "name": "andromeda-project",
+  "version": "1.0.0",
+  "description": "Andromeda project with temporary email and SMS backend services",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.5",
+    "twilio": "^4.22.0"
+  }
+}

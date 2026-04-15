@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone Number Maker - Andromeda 🪐</title>
+  <link rel="icon" href="AndromedaLogo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #04040d;
+      --panel: rgba(10,11,28,0.95);
+      --accent: #6a5cff;
+      --accent2: #a78bfa;
+      --text: #dde0ff;
+      --muted: rgba(200,205,255,0.7);
+      --border: rgba(106,92,255,0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: radial-gradient(circle at top, rgba(106,92,255,0.18), transparent 26%), #060614; color: var(--text); font-family: 'Rajdhani', sans-serif; }
+    body { padding: 28px; display: grid; place-items: center; }
+    .panel { width: min(980px,100%); background: var(--panel); border: 1px solid rgba(106,92,255,0.22); border-radius: 28px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .page-title { font-family: 'Orbitron', sans-serif; font-size: clamp(32px, 5vw, 48px); letter-spacing: 3px; margin-bottom: 10px; color: var(--accent); }
+    .subheading { color: var(--muted); margin-bottom: 24px; line-height: 1.7; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+    .btn { padding: 14px 22px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 14px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .btn.secondary { background: rgba(255,255,255,0.07); color: var(--text); border: 1px solid rgba(255,255,255,0.08); }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(106,92,255,0.25); }
+    .summary-grid { display: grid; grid-template-columns: repeat(3,minmax(180px,1fr)); gap: 16px; margin-bottom: 24px; }
+    .info-card { background: rgba(4,4,13,0.85); border: 1px solid var(--border); border-radius: 20px; padding: 22px; }
+    .info-card label { display: block; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .info-card strong { display: block; font-size: 24px; color: #fff; word-break: break-all; }
+    .info-card small { color: var(--muted); }
+    .panel-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-bottom: 24px; }
+    .panel-block { background: rgba(4,4,13,0.88); border: 1px solid var(--border); border-radius: 22px; padding: 22px; }
+    .panel-block .block-title { font-family: 'Orbitron', sans-serif; font-size: 14px; color: var(--accent2); letter-spacing: 2px; margin-bottom: 14px; }
+    .panel-block label { display: block; color: var(--muted); margin-bottom: 8px; font-size: 13px; }
+    .panel-block input, .panel-block textarea, .panel-block select { width: 100%; border-radius: 14px; border: 1px solid var(--border); padding: 14px 16px; margin-bottom: 14px; background: rgba(8,8,22,0.75); color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 14px; }
+    .panel-block textarea { min-height: 120px; resize: vertical; }
+    .panel-block input:focus, .panel-block textarea:focus, .panel-block select:focus { outline: 2px solid rgba(106,92,255,0.24); outline-offset: 2px; }
+    .panel-block .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .inbox-list, .activity-log { max-height: 360px; overflow-y: auto; display: grid; gap: 12px; }
+    .item { background: rgba(8,8,22,0.8); border: 1px solid rgba(106,92,255,0.12); border-radius: 18px; padding: 16px; }
+    .item strong { display: block; margin-bottom: 8px; font-size: 14px; }
+    .item small { color: var(--muted); }
+    .empty-state { color: var(--muted); padding: 20px 0; text-align: center; }
+    .phone-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+    .note { color: var(--muted); font-size: 13px; line-height: 1.7; }
+    @media (max-width: 860px) { .panel-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <div class="page-title">Phone Number Maker</div>
+    <p class="subheading">Generate a temporary phone number for quick calls and real SMS delivery. Use the controls below to call, text, and download the conversation log.</p>
+
+    <div class="toolbar">
+      <button id="generatePhoneBtn" class="btn">Generate Number</button>
+      <button id="copyPhoneBtn" class="btn">Copy Number</button>
+      <button id="downloadPhoneJsonBtn" class="btn">Download JSON</button>
+      <button id="clearLogBtn" class="btn secondary">Clear Activity</button>
+    </div>
+
+    <div class="summary-grid">
+      <div class="info-card">
+        <label>Temporary Number</label>
+        <strong id="phoneNumber">No number generated yet</strong>
+        <small id="phoneHint">Generate a number to start placing calls and texts.</small>
+        <small id="phoneFromNumber">SMS will be sent from the configured gateway number.</small>
+      </div>
+      <div class="info-card">
+        <label>Inbox Messages</label>
+        <strong id="inboxCount">0</strong>
+        <small>Messages received and sent locally.</small>
+      </div>
+      <div class="info-card">
+        <label>Call Log</label>
+        <strong id="callCount">0</strong>
+        <small>Outgoing and incoming activity shown below.</small>
+      </div>
+    </div>
+
+    <div class="panel-grid">
+      <section class="panel-block">
+        <div class="block-title">Quick Actions</div>
+        <label for="targetPhoneNumber">Target phone number</label>
+        <input id="targetPhoneNumber" type="tel" placeholder="Enter destination number or use the generated number" />
+        <label for="smsMessage">Text message</label>
+        <textarea id="smsMessage" placeholder="Type a text to send..."></textarea>
+        <div class="phone-actions">
+          <button id="callBtn" class="btn">Call</button>
+          <button id="sendTextBtn" class="btn">Send Text</button>
+        </div>
+        <div class="note">Phone calls open your device dialer; SMS messages are sent through the configured backend gateway.</div>
+      </section>
+
+      <section class="panel-block">
+        <div class="block-title">Call Inbox & Recent Activity</div>
+        <div id="activityLog" class="activity-log">
+          <div class="empty-state">No calls or messages yet. Generate a number first.</div>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel-block">
+      <div class="block-title">Text Activity</div>
+      <div id="messagesList" class="inbox-list">
+        <div class="empty-state">No SMS activity yet. Send a real text to see it here.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const phoneNumberEl = document.getElementById('phoneNumber');
+    const phoneHintEl = document.getElementById('phoneHint');
+    const inboxCountEl = document.getElementById('inboxCount');
+    const callCountEl = document.getElementById('callCount');
+    const messagesList = document.getElementById('messagesList');
+    const activityLog = document.getElementById('activityLog');
+    const targetPhoneNumber = document.getElementById('targetPhoneNumber');
+    const smsMessage = document.getElementById('smsMessage');
+    const generatePhoneBtn = document.getElementById('generatePhoneBtn');
+    const copyPhoneBtn = document.getElementById('copyPhoneBtn');
+    const downloadPhoneJsonBtn = document.getElementById('downloadPhoneJsonBtn');
+    const callBtn = document.getElementById('callBtn');
+    const sendTextBtn = document.getElementById('sendTextBtn');
+    const clearLogBtn = document.getElementById('clearLogBtn');
+    const phoneFromNumber = document.getElementById('phoneFromNumber');
+    const smsStatus = document.getElementById('smsStatus');
+
+    let currentNumber = '';
+    let configuredSmsFrom = '';
+    const messages = [];
+    const activityItems = [];
+
+    const prefixes = ['+1', '+44', '+61', '+49', '+33'];
+    const carriers = ['WaveTel', 'BlueCall', 'NovaSMS', 'SkyLine', 'MetroTalk'];
+
+    function randomPhone() {
+      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+      if (prefix === '+1') {
+        return `${prefix} (${randomDigits(3)}) ${randomDigits(3)}-${randomDigits(4)}`;
+      }
+      if (prefix === '+44') {
+        return `${prefix} 7${randomDigits(3)} ${randomDigits(3)} ${randomDigits(3)}`;
+      }
+      return `${prefix} ${randomDigits(2)} ${randomDigits(3)} ${randomDigits(3)}`;
+    }
+
+    function randomDigits(length) {
+      return Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+    }
+
+    function setPhoneStatus(text, error = false) {
+      smsStatus.textContent = text;
+      smsStatus.style.color = error ? '#ff9ca8' : 'var(--muted)';
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      const success = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      return success ? Promise.resolve() : Promise.reject();
+    }
+
+    async function loadConfig() {
+      try {
+        const response = await fetch('/api/config');
+        if (!response.ok) {
+          throw new Error('Unable to load backend configuration.');
+        }
+        const config = await response.json();
+        configuredSmsFrom = config.smsFrom || '';
+        phoneFromNumber.textContent = configuredSmsFrom ? `SMS will be sent from ${configuredSmsFrom}.` : 'SMS gateway is not configured yet.';
+      } catch (error) {
+        phoneFromNumber.textContent = 'Unable to load SMS backend configuration.';
+      }
+    }
+
+    function renderInbox() {
+      inboxCountEl.textContent = messages.length;
+      messagesList.innerHTML = '';
+      if (messages.length === 0) {
+        messagesList.innerHTML = '<div class="empty-state">No messages yet. Send a text to see activity.</div>';
+        return;
+      }
+      messages.slice().reverse().forEach(msg => {
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.innerHTML = `<strong>${msg.subject}</strong><small>${msg.from} · ${msg.time}</small><p style="margin-top:10px;color:rgba(200,205,255,0.85);line-height:1.6;">${msg.body}</p>`;
+        messagesList.appendChild(item);
+      });
+    }
+
+    function renderActivity() {
+      callCountEl.textContent = activityItems.length;
+      activityLog.innerHTML = '';
+      if (activityItems.length === 0) {
+        activityLog.innerHTML = '<div class="empty-state">No activity yet. Call or text to start the log.</div>';
+        return;
+      }
+      activityItems.slice().reverse().forEach(entry => {
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.innerHTML = `<strong>${entry.title}</strong><small>${entry.time}</small><p style="margin-top:10px;color:rgba(200,205,255,0.85);line-height:1.6;">${entry.description}</p>`;
+        activityLog.appendChild(item);
+      });
+    }
+
+    function logActivity(title, description) {
+      activityItems.push({ title, description, time: new Date().toLocaleTimeString() });
+      renderActivity();
+    }
+
+    function addMessage(from, body) {
+      messages.push({ from, subject: body.length > 40 ? body.slice(0, 38) + '…' : 'SMS message', body, time: new Date().toLocaleTimeString() });
+      renderInbox();
+    }
+
+    function generatePhoneNumber() {
+      currentNumber = randomPhone();
+      phoneNumberEl.textContent = currentNumber;
+      phoneHintEl.textContent = `Carrier: ${carriers[Math.floor(Math.random() * carriers.length)]}`;
+      copyPhoneBtn.disabled = false;
+      downloadPhoneJsonBtn.disabled = false;
+      callBtn.disabled = false;
+      sendTextBtn.disabled = false;
+      messages.length = 0;
+      activityItems.length = 0;
+      renderInbox();
+      renderActivity();
+      setPhoneStatus('Temporary number generated. Ready to place real calls and send SMS.');
+    }
+
+    function copyPhoneNumber() {
+      if (!currentNumber) return;
+      copyText(currentNumber).then(() => {
+        copyPhoneBtn.textContent = 'Copied!';
+        setPhoneStatus('Phone number copied to clipboard.');
+        setTimeout(() => { copyPhoneBtn.textContent = 'Copy Number'; }, 1200);
+      }).catch(() => {
+        copyPhoneBtn.textContent = 'Copy failed';
+        setPhoneStatus('Unable to copy via clipboard. Copy manually from the display.', true);
+      });
+    }
+
+    function downloadPhoneJson() {
+      if (!currentNumber) return;
+      const payload = {
+        phoneNumber: currentNumber,
+        configuredSmsFrom,
+        generatedAt: new Date().toISOString(),
+        messages,
+        activity: activityItems,
+        instructions: 'Use this number as a temporary alias. SMS messages are sent through the configured gateway.'
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'temporary-phone-number.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    }
+
+    function callNumber() {
+      if (!currentNumber) {
+        setPhoneStatus('Generate a temporary number first.', true);
+        return;
+      }
+      const target = targetPhoneNumber.value.trim() || currentNumber;
+      const dial = target.replace(/[^\d+]/g, '');
+      logActivity('Outgoing call', `Calling ${target} from ${currentNumber}... launched device dialer.`);
+      addMessage(currentNumber, `Call attempt to ${target}.`);
+      setPhoneStatus(`Calling ${target} using the device dialer.`);
+      if (dial) {
+        window.location.href = `tel:${dial}`;
+      }
+    }
+
+    async function sendText() {
+      if (!currentNumber) {
+        setPhoneStatus('Generate a temporary number first.', true);
+        return;
+      }
+      const target = targetPhoneNumber.value.trim();
+      const body = smsMessage.value.trim();
+      if (!target) {
+        setPhoneStatus('Enter a target phone number before sending SMS.', true);
+        return;
+      }
+      if (!body) {
+        setPhoneStatus('Enter a message before sending text.', true);
+        return;
+      }
+      sendTextBtn.disabled = true;
+      sendTextBtn.textContent = 'Sending...';
+      try {
+        const response = await fetch('/api/send-sms', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ to: target, body })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to send SMS.');
+        }
+
+        logActivity('Text sent', `SMS delivered to ${target}.`);
+        addMessage(`You → ${target}`, body);
+        smsMessage.value = '';
+        setPhoneStatus(`SMS sent to ${target}.`);
+      } catch (error) {
+        setPhoneStatus(`SMS sending failed: ${error.message}`, true);
+      } finally {
+        sendTextBtn.disabled = false;
+        setTimeout(() => { sendTextBtn.textContent = 'Send Text'; }, 1200);
+      }
+    }
+
+    function clearActivity() {
+      messages.length = 0;
+      activityItems.length = 0;
+      renderInbox();
+      renderActivity();
+      setPhoneStatus('Activity log cleared.');
+    }
+
+    generatePhoneBtn.addEventListener('click', generatePhoneNumber);
+    copyPhoneBtn.addEventListener('click', copyPhoneNumber);
+    downloadPhoneJsonBtn.addEventListener('click', downloadPhoneJson);
+    callBtn.addEventListener('click', callNumber);
+    sendTextBtn.addEventListener('click', sendText);
+    clearLogBtn.addEventListener('click', clearActivity);
+
+    window.addEventListener('load', () => {
+      copyPhoneBtn.disabled = true;
+      downloadPhoneJsonBtn.disabled = true;
+      callBtn.disabled = true;
+      sendTextBtn.disabled = true;
+      renderInbox();
+      renderActivity();
+      setPhoneStatus('Ready. Generate a number and configure the backend to send real SMS.');
+      loadConfig();
+    });
+  </script>
+</body>
+</html>

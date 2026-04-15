@@ -93,6 +93,189 @@
       letter-spacing: 2px;
     }
 
+    .dashboard-header .header-right {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .auth-btn {
+      border: 1px solid rgba(106,92,255,0.35);
+      background: rgba(106,92,255,0.12);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .auth-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(106,92,255,0.2);
+    }
+
+    #authOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4,4,14,0.95);
+      display: grid;
+      place-items: center;
+      z-index: 100;
+      padding: 24px;
+      backdrop-filter: blur(8px);
+    }
+
+    #authOverlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity 0.25s ease;
+    }
+
+    .auth-panel {
+      width: min(520px,100%);
+      background: rgba(8,8,26,0.98);
+      border: 1px solid rgba(106,92,255,0.18);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+    }
+
+    .auth-panel h2 {
+      margin-bottom: 14px;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #fff;
+      font-size: 22px;
+    }
+
+    .auth-panel label {
+      display: block;
+      margin-top: 16px;
+      color: var(--text-dim);
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+
+    .auth-panel input {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(10,10,28,0.9);
+      color: var(--text);
+      padding: 14px 16px;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .auth-panel .auth-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .auth-panel .toggle-link {
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 13px;
+    }
+
+    .auth-panel .status-note {
+      margin-top: 12px;
+      color: var(--text-dim);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .auth-panel .env-note {
+      margin-top: 12px;
+      color: var(--info);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .auth-panel button {
+      width: auto;
+    }
+
+    .hero-panel {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 18px;
+      padding: 24px;
+      background: rgba(14,14,36,0.8);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      grid-template-columns: 1.5fr 1fr;
+      align-items: center;
+    }
+
+    .hero-copy h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 28px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .hero-copy p {
+      color: var(--text-dim);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(106,92,255,0.15);
+      color: var(--accent2);
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .hero-card {
+      background: rgba(10,10,26,0.9);
+      border: 1px solid rgba(106,92,255,0.12);
+      border-radius: 18px;
+      padding: 18px;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+      min-height: 90px;
+    }
+
+    .hero-card strong {
+      font-size: 14px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .hero-card p {
+      color: var(--text-dim);
+      font-size: 13px;
+      margin: 0;
+    }
+
     /* Stat Cards */
     .stat-card {
       background: rgba(14,14,36,0.8);
@@ -476,6 +659,52 @@
     <div class="dashboard-header">
       <h1>Andromeda Dashboard</h1>
       <p>System Overview & Analytics</p>
+      <div class="header-right">
+        <span id="userStatus">Guest</span>
+        <button id="signInBtn" class="auth-btn">Sign In</button>
+        <button id="signOutBtn" class="auth-btn">Sign Out</button>
+      </div>
+    </div>
+
+    <div id="guestHero" class="hero-panel">
+      <div class="hero-copy">
+        <span class="hero-badge">Guest Preview</span>
+        <h2>Explore Andromeda without signing in</h2>
+        <p>Browse demos of our tools, try proxy methods, and see your activity in a lightweight guest dashboard. Sign up to save your preferences and unlock full access.</p>
+        <div class="hero-actions">
+          <button id="heroSignInBtn" class="auth-btn">Sign In / Sign Up</button>
+          <a class="action-btn" href="login.html">Go to Login Page</a>
+        </div>
+      </div>
+      <div class="hero-cards">
+        <div class="hero-card"><strong>Temp Email</strong><p>Send real email once backend is configured.</p></div>
+        <div class="hero-card"><strong>Temp Phone</strong><p>Send SMS through Twilio and manage your number.</p></div>
+        <div class="hero-card"><strong>File Maker</strong><p>Generate temporary files with a single click.</p></div>
+        <div class="hero-card"><strong>Proxy Tools</strong><p>Access different unblocker methods from one dashboard.</p></div>
+      </div>
+    </div>
+
+    <div id="authOverlay">
+      <div class="auth-panel" id="authPanel">
+        <h2 id="authTitle">Sign in to Andromeda</h2>
+        <label for="authEmail">Email address</label>
+        <input id="authEmail" type="email" placeholder="you@example.com" autocomplete="username">
+        <label for="authPassword">Password</label>
+        <input id="authPassword" type="password" placeholder="••••••••" autocomplete="current-password">
+        <div id="confirmPasswordGroup" style="display:none;">
+          <label for="authConfirmPassword">Confirm password</label>
+          <input id="authConfirmPassword" type="password" placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <div class="auth-actions">
+          <button id="authSubmitBtn" class="auth-btn">Sign In</button>
+          <div>
+            <span id="authTogglePrompt">New here?</span>
+            <span id="authToggleBtn" class="toggle-link">Create account</span>
+          </div>
+        </div>
+        <p class="status-note" id="authStatus">Secure signup and login are stored locally in your browser. This page is for demo use only.</p>
+        <p class="env-note">For real email/SMS delivery, copy <a href=".env.example" target="_blank" style="color: var(--accent); text-decoration: underline;">.env.example</a> to <code>.env</code> and configure SMTP/Twilio.</p>
+      </div>
     </div>
 
     <!-- Main Stats -->
@@ -593,22 +822,22 @@
     <!-- Quick Actions -->
     
     <div class="quick-actions">
-      <button class="action-btn" onclick="parent.openTab('tempfilemaker.html','Temp File Maker')">
+      <button class="action-btn" onclick="openDashboardLink('tempfilemaker.html','Temp File Maker')">
         <div class="action-icon"><i class="fas fa-file"></i></div>
         <div>Create Temp File</div>
       </button>
       
-      <button class="action-btn" onclick="parent.openTab('1klinks.html','Links')">
+      <button class="action-btn" onclick="openDashboardLink('1klinks.html','Links')">
         <div class="action-icon"><i class="fas fa-link"></i></div>
         <div>Browse Links</div>
       </button>
       
-      <button class="action-btn" onclick="parent.openTab('andromedamusic.html','Music')">
+      <button class="action-btn" onclick="openDashboardLink('andromedamusic.html','Music')">
         <div class="action-icon"><i class="fas fa-music"></i></div>
         <div>Listen to Music</div>
       </button>
       
-      <button class="action-btn" onclick="parent.openTab('andromeda.html','Proxy Methods')">
+      <button class="action-btn" onclick="openDashboardLink('andromeda.html','Proxy Methods')">
         <div class="action-icon"><i class="fas fa-flask"></i></div>
         <div>Proxy Methods</div>
       </button>
@@ -648,7 +877,161 @@
   <script>
     // Dashboard Data Storage
     const DASHBOARD_STORAGE_KEY = 'andromeda_dashboard_v2';
-    
+    const AUTH_STORAGE_KEY = 'andromeda_user_auth';
+
+    const authOverlay = document.getElementById('authOverlay');
+    const authTitle = document.getElementById('authTitle');
+    const authEmail = document.getElementById('authEmail');
+    const authPassword = document.getElementById('authPassword');
+    const authConfirmPassword = document.getElementById('authConfirmPassword');
+    const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
+    const authSubmitBtn = document.getElementById('authSubmitBtn');
+    const authToggleBtn = document.getElementById('authToggleBtn');
+    const authTogglePrompt = document.getElementById('authTogglePrompt');
+    const authStatus = document.getElementById('authStatus');
+    const userStatus = document.getElementById('userStatus');
+    const signInBtn = document.getElementById('signInBtn');
+    const signOutBtn = document.getElementById('signOutBtn');
+    const guestHero = document.getElementById('guestHero');
+    const heroSignInBtn = document.getElementById('heroSignInBtn');
+
+    let isSignupMode = false;
+    let currentUser = null;
+
+    function stringifyBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      bytes.forEach(byte => binary += String.fromCharCode(byte));
+      return btoa(binary);
+    }
+
+    async function hashPassword(password) {
+      if (window.crypto && window.crypto.subtle) {
+        const data = new TextEncoder().encode(password);
+        const hash = await crypto.subtle.digest('SHA-256', data);
+        return stringifyBase64(hash);
+      }
+      return btoa(password);
+    }
+
+    async function saveAuth(email, passwordHash) {
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ email, passwordHash }));
+    }
+
+    function loadAuth() {
+      try {
+        const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+        if (!stored) return null;
+        return JSON.parse(stored);
+      } catch (e) {
+        console.warn('Failed to parse auth state:', e);
+        return null;
+      }
+    }
+
+    function updateAuthDisplay() {
+      userStatus.textContent = currentUser ? `Signed in as ${currentUser.email}` : 'Guest';
+      signOutBtn.style.display = currentUser ? 'inline-flex' : 'none';
+      signInBtn.style.display = currentUser ? 'none' : 'inline-flex';
+      guestHero.style.display = currentUser ? 'none' : 'grid';
+    }
+
+    function toggleAuthMode() {
+      isSignupMode = !isSignupMode;
+      if (isSignupMode) {
+        authTitle.textContent = 'Create a secure account';
+        authSubmitBtn.textContent = 'Sign Up';
+        authTogglePrompt.textContent = 'Already have an account?';
+        authToggleBtn.textContent = 'Sign in';
+        confirmPasswordGroup.style.display = 'block';
+      } else {
+        authTitle.textContent = 'Sign in to Andromeda';
+        authSubmitBtn.textContent = 'Sign In';
+        authTogglePrompt.textContent = 'New here?';
+        authToggleBtn.textContent = 'Create account';
+        confirmPasswordGroup.style.display = 'none';
+      }
+      authStatus.textContent = 'Secure signup and login are stored locally in your browser. This page is for demo use only.';
+      authEmail.value = '';
+      authPassword.value = '';
+      authConfirmPassword.value = '';
+    }
+
+    async function handleAuth() {
+      const email = authEmail.value.trim().toLowerCase();
+      const password = authPassword.value;
+      const confirmPassword = authConfirmPassword.value;
+
+      if (!email || !password) {
+        authStatus.textContent = 'Please enter email and password.';
+        return;
+      }
+
+      if (isSignupMode) {
+        if (password !== confirmPassword) {
+          authStatus.textContent = 'Passwords do not match.';
+          return;
+        }
+        const passwordHash = await hashPassword(password);
+        await saveAuth(email, passwordHash);
+        currentUser = { email };
+        authStatus.textContent = 'Account created. Welcome!';
+        hideAuthOverlay();
+      } else {
+        const stored = loadAuth();
+        if (!stored) {
+          authStatus.textContent = 'No account found. Please sign up first.';
+          return;
+        }
+        const passwordHash = await hashPassword(password);
+        if (stored.email !== email || stored.passwordHash !== passwordHash) {
+          authStatus.textContent = 'Email or password incorrect.';
+          return;
+        }
+        currentUser = { email };
+        authStatus.textContent = 'Signed in successfully.';
+        hideAuthOverlay();
+      }
+      updateAuthDisplay();
+    }
+
+    function hideAuthOverlay() {
+      authOverlay.classList.add('hidden');
+    }
+
+    function showAuthOverlay() {
+      if (isSignupMode) {
+        toggleAuthMode();
+      }
+      authOverlay.classList.remove('hidden');
+    }
+
+    function signOut() {
+      currentUser = null;
+      updateAuthDisplay();
+      authStatus.textContent = 'Signed out successfully. Sign in to access saved settings.';
+      hideAuthOverlay();
+    }
+
+    authToggleBtn.addEventListener('click', toggleAuthMode);
+    authSubmitBtn.addEventListener('click', handleAuth);
+    signInBtn.addEventListener('click', showAuthOverlay);
+    heroSignInBtn.addEventListener('click', showAuthOverlay);
+    signOutBtn.addEventListener('click', signOut);
+
+    function initializeAuth() {
+      const stored = loadAuth();
+      if (stored) {
+        currentUser = { email: stored.email };
+        updateAuthDisplay();
+        authOverlay.classList.add('hidden');
+      } else {
+        currentUser = null;
+        updateAuthDisplay();
+        authOverlay.classList.add('hidden');
+      }
+    }
+
     // Proxy Methods Data
     const PROXY_METHODS = [
       { id: 'main', name: 'Main Method', icon: '🚀', color: '#6a5cff' },
@@ -765,127 +1148,90 @@
     
     // Update stats display
     function updateStats() {
-      // Update basic stats
       document.getElementById('totalSessions').textContent = dashboardData.totalSessions;
       document.getElementById('pagesVisited').textContent = dashboardData.pagesVisited;
-    
-      function updateChartWithRealData() {
-    // Get visits from last 7 days
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const today = new Date();
-    
-    const dailyVisits = Array(7).fill(0);
-    
-    dashboardData.websiteHistory?.forEach(visit => {
-        const visitDate = new Date(visit.timestamp);
-        const daysAgo = Math.floor((today - visitDate) / (1000 * 60 * 60 * 24));
-        
-        if (daysAgo >= 0 && daysAgo < 7) {
-            dailyVisits[6 - daysAgo]++; // Reverse order for chart
-        }
-    });
-    
-    // Update the chart
-    const chartContainer = document.querySelector('.usage-chart > div');
-    if (!chartContainer) return;
-    
-    chartContainer.innerHTML = '';
-    
-    const maxVisits = Math.max(...dailyVisits, 1); // Avoid division by zero
-    
-    days.forEach((day, index) => {
-        const isToday = index === today.getDay();
-        const visits = dailyVisits[index];
-        const height = `${(visits / maxVisits) * 100}%`;
-        
-        const bar = document.createElement('div');
-        bar.style.flex = '1';
-        bar.style.display = 'flex';
-        bar.style.flexDirection = 'column';
-        bar.style.alignItems = 'center';
-        
-        bar.innerHTML = `
-            <div style="background: linear-gradient(to top, var(--accent), var(--accent2)); 
-                       height: ${height}; 
-                       width: 80%; 
-                       border-radius: 4px;
-                       ${isToday ? 'box-shadow: 0 0 15px var(--accent-glow);' : ''}"></div>
-            <div style="font-size: 11px; color: ${isToday ? 'var(--accent2)' : 'var(--text-dim)'}; margin-top: 8px;">
-                ${day}<br>
-                <small style="font-size: 9px;">${visits}</small>
-            </div>
-        `;
-        
-        chartContainer.appendChild(bar);
-  });
-}
-      // Calculate active time
+
       const sessionDuration = Math.floor((Date.now() - dashboardData.sessionStartTime) / 60000);
       const totalMinutes = dashboardData.totalTime + sessionDuration;
       const hours = Math.floor(totalMinutes / 60);
       const minutes = totalMinutes % 60;
       document.getElementById('totalTime').textContent = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-  
-         const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-    const weeklyVisits = dashboardData.websiteHistory?.filter(visit => 
-        visit.timestamp > oneWeekAgo
-    ).length || 0;
 
-        const hourCounts = {};
-    dashboardData.websiteHistory?.forEach(visit => {
+      const today = new Date().toDateString();
+      const todayVisits = dashboardData.websiteHistory?.filter(visit => new Date(visit.timestamp).toDateString() === today).length || 0;
+      const avgTimePerVisit = dashboardData.websiteHistory?.length ? Math.max(1, Math.round(totalMinutes / dashboardData.websiteHistory.length)) : 0;
+
+      if (document.getElementById('todayVisits')) {
+        document.getElementById('todayVisits').textContent = todayVisits;
+      }
+      if (document.getElementById('avgTime')) {
+        document.getElementById('avgTime').textContent = `${avgTimePerVisit}m`;
+      }
+
+      const siteCounts = {};
+      dashboardData.websiteHistory?.forEach(visit => {
+        const host = getDomainFromUrl(visit.url);
+        siteCounts[host] = (siteCounts[host] || 0) + 1;
+      });
+
+      const topSite = Object.entries(siteCounts).sort((a, b) => b[1] - a[1])[0];
+      if (document.getElementById('topSite')) {
+        document.getElementById('topSite').textContent = topSite ? topSite[0] : 'None';
+      }
+      if (document.getElementById('topSiteCount')) {
+        document.getElementById('topSiteCount').textContent = topSite ? `${topSite[1]} visits` : '0 visits';
+      }
+
+      const hourCounts = {};
+      dashboardData.websiteHistory?.forEach(visit => {
         const hour = new Date(visit.timestamp).getHours();
         hourCounts[hour] = (hourCounts[hour] || 0) + 1;
-    });
-    
-    let maxHour = 0;
-    let maxCount = 0;
-    for (const [hour, count] of Object.entries(hourCounts)) {
-        if (count > maxCount) {
-            maxCount = count;
-            maxHour = hour;
+      });
+
+      let peakHour = 'None';
+      let peakCount = 0;
+      for (const [hour, count] of Object.entries(hourCounts)) {
+        if (count > peakCount) {
+          peakCount = count;
+          peakHour = `${hour}:00`;
         }
-    }
-    
-    const mostActiveHour = maxCount > 0 ? `${maxHour}:00` : 'None';
-    
-    // Update chart with real data
-    updateChartWithRealData();
-    
-        const today = new Date().toDateString();
-    const todayVisits = dashboardData.websiteHistory?.filter(visit => {
-        return new Date(visit.timestamp).toDateString() === today;
-    }).length || 0;
-    
-   if (document.getElementById('todayVisits')) {
-        document.getElementById('todayVisits').textContent = todayVisits;
-    }
-      // Update last visited website
+      }
+
+      if (document.getElementById('peakHour')) {
+        document.getElementById('peakHour').textContent = peakHour;
+      }
+      if (document.getElementById('peakHourVisits')) {
+        document.getElementById('peakHourVisits').textContent = `${peakCount} visits`;
+      }
+
       if (dashboardData.lastVisitedWebsite) {
         const site = dashboardData.lastVisitedWebsite;
         document.getElementById('lastVisitedSite').textContent = getDomainFromUrl(site.url);
         document.getElementById('lastUsedMethod').textContent = getMethodName(site.method);
         document.getElementById('lastVisitTime').textContent = `↗ ${site.visitTime}`;
-        
-        // Update website preview
         document.getElementById('websiteUrl').textContent = site.url;
         document.getElementById('visitTimestamp').textContent = site.visitTime;
         document.getElementById('proxyMethod').textContent = getMethodName(site.method);
         document.getElementById('visitCount').textContent = `${dashboardData.websiteHistory.length} visits`;
         document.getElementById('websiteStatus').textContent = 'Visited';
+      } else {
+        document.getElementById('lastVisitedSite').textContent = 'None';
+        document.getElementById('lastUsedMethod').textContent = 'No method';
+        document.getElementById('lastVisitTime').textContent = 'Never';
+        document.getElementById('websiteUrl').textContent = 'No website visited yet';
+        document.getElementById('visitTimestamp').textContent = 'Never';
+        document.getElementById('proxyMethod').textContent = 'No method';
+        document.getElementById('visitCount').textContent = '0 visits';
+        document.getElementById('websiteStatus').textContent = 'No visits yet';
       }
-      
-      // Update most used method
+
       const mostUsed = getMostUsedMethod();
       document.getElementById('mostUsedMethod').textContent = mostUsed.name;
       document.getElementById('methodUsageCount').textContent = `${mostUsed.count} uses`;
-      
-      // Update last updated time
-      document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
+      document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      updateChart();
     }
-    
+
     // Get method name from ID
     function getMethodName(methodId) {
       const method = PROXY_METHODS.find(m => m.id === methodId);
@@ -929,7 +1275,7 @@
         `;
         
         item.onclick = () => {
-          parent.loadPage(`${method.id === 'main' ? 'andromeda' : method.id}.html`, method.name);
+          openDashboardLink(`${method.id === 'main' ? 'andromeda.html' : method.id + '.html'}`, method.name);
         };
         
         grid.appendChild(item);
@@ -1022,23 +1368,29 @@
     function updateChart() {
       const chartContainer = document.querySelector('.usage-chart > div');
       if (!chartContainer) return;
-      
-      // Simple demo chart - in real app, use actual data
+
       const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      const today = new Date().getDay() - 1; // Monday = 0
-      
+      const todayIndex = (new Date().getDay() + 6) % 7;
+      const dailyVisits = Array(7).fill(0);
+
+      dashboardData.websiteHistory?.forEach(visit => {
+        const dayIndex = (new Date(visit.timestamp).getDay() + 6) % 7;
+        dailyVisits[dayIndex]++;
+      });
+
       chartContainer.innerHTML = '';
-      
+      const maxVisits = Math.max(...dailyVisits, 1);
+
       days.forEach((day, index) => {
-        const isToday = index === today;
-        const height = isToday ? '100%' : `${30 + Math.random() * 50}%`;
-        
+        const isToday = index === todayIndex;
+        const height = `${(dailyVisits[index] / maxVisits) * 100}%`;
+
         const bar = document.createElement('div');
         bar.style.flex = '1';
         bar.style.display = 'flex';
         bar.style.flexDirection = 'column';
         bar.style.alignItems = 'center';
-        
+
         bar.innerHTML = `
           <div style="background: linear-gradient(to top, var(--accent), var(--accent2)); 
                      height: ${height}; 
@@ -1046,101 +1398,14 @@
                      border-radius: 4px;
                      ${isToday ? 'box-shadow: 0 0 15px var(--accent-glow);' : ''}"></div>
           <div style="font-size: 11px; color: ${isToday ? 'var(--accent2)' : 'var(--text-dim)'}; margin-top: 8px;">
-            ${day}
+            ${day}<br><small style="font-size: 9px;">${dailyVisits[index]}</small>
           </div>
         `;
-        
+
         chartContainer.appendChild(bar);
       });
     }
     
-  // Initialize dashboard
- // Add this to your dashboard.html script:
-
-// Complete dashboard initialization
-    updateChart();
-
-    // Set up interval for time tracking
-    setInterval(() => {
-      updateStats();
-      saveDashboardData();
-    }, 60000); // Update every minute
-
-    // Try to get data from parent if available
-    if (parent && parent.tabRegistry) {
-      try {
-        const tabs = Array.from(parent.tabRegistry.keys());
-        if (tabs.length > 0) {
-          // Update pages visited count
-          dashboardData.pagesVisited = tabs.length;
-          updateStats();
-        }
-      } catch (e) {
-        console.log('Could not access parent tab data');
-      }
-    }
-
-    // Listen for real-time updates
-    function setupRealtimeUpdates() {
-      // Listen for storage events (cross-tab)
-      window.addEventListener('storage', function(e) {
-        if (e.key === 'andromeda_dashboard_v2' || e.key === 'andromeda_dashboard_last_event') {
-          console.log('🔄 Dashboard data updated from storage');
-          loadDashboardData();
-          updateStats();
-          renderMethodsGrid();
-          renderActivity();
-        }
-      });
-      // Listen for custom events (same tab)
-      window.addEventListener('andromeda_dashboard_update', function(e) {
-        if (e.detail) {
-          console.log('🔄 Dashboard update event received:', e.detail.type);
-
-          if (e.detail.type === 'website_visit') {
-            // Update with new visit
-            dashboardData.lastVisitedWebsite = e.detail.data;
-            dashboardData.lastUsedMethod = e.detail.data.method;
-
-            if (!dashboardData.methodUsage) dashboardData.methodUsage = { main: 0, blank: 0, anticlose: 0 };
-            dashboardData.methodUsage[e.detail.data.method] = (dashboardData.methodUsage[e.detail.data.method] || 0) + 1;
-
-            if (!dashboardData.websiteHistory) dashboardData.websiteHistory = [];
-            dashboardData.websiteHistory.unshift(e.detail.data);
-            if (dashboardData.websiteHistory.length > 10) {
-              dashboardData.websiteHistory = dashboardData.websiteHistory.slice(0, 10);
-            }
-
-            updateStats();
-            saveDashboardData();
-          }
-
-          if (e.detail.type === 'activity') {
-            // Add new activity
-            if (!dashboardData.recentActivity) dashboardData.recentActivity = [];
-            dashboardData.recentActivity.unshift(e.detail.data);
-            if (dashboardData.recentActivity.length > 10) {
-              dashboardData.recentActivity = dashboardData.recentActivity.slice(0, 10);
-            }
-
-            renderActivity();
-            saveDashboardData();
-          }
-        }
-      });
-
-      // Poll for updates every 2 seconds (fallback)
-      setInterval(() => {
-        loadDashboardData();
-        updateStats();
-      }, 2000);
-    }
-
-    setupRealtimeUpdates();
-
-  // Start when page loads
-  window.addEventListener('load', initDashboard);
-
   // Expose functions to parent window
   window.dashboardAPI = {
     trackWebsiteVisit,
@@ -1158,240 +1423,228 @@
       console.error('Failed to open window:', e);
     }
   }
-// Add these functions to your dashboard.html script section:
 
-// Real-time update checker
-function startRealTimeUpdates() {
+  function openDashboardLink(path, title) {
+    try {
+      if (parent && typeof parent.openTab === 'function') {
+        parent.openTab(path, title);
+        return;
+      }
+      if (parent && typeof parent.loadPage === 'function') {
+        parent.loadPage(path, title);
+        return;
+      }
+      window.location.href = path;
+    } catch (e) {
+      console.error('Failed to navigate to dashboard link:', e);
+      window.location.href = path;
+    }
+  }
+
+  // Real-time update checker
+  function startRealTimeUpdates() {
     console.log('🔄 Starting real-time dashboard updates');
-    
-    // Update every 2 seconds
-    setInterval(() => {
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'andromeda_dashboard_v2') {
+        console.log('🔄 Dashboard data updated from another tab');
         loadDashboardData();
         updateStats();
         renderMethodsGrid();
         renderActivity();
-    }, 2000);
-    
-    // Listen for storage events (from other tabs)
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'andromeda_dashboard_v2') {
-            console.log('🔄 Dashboard data updated from another tab');
-            loadDashboardData();
-            updateStats();
-            renderMethodsGrid();
-            renderActivity();
-        }
+      }
     });
-}
 
-function initDashboard() {
-    console.log('🚀 Initializing Andromeda Dashboard...');
-    
-    // Load data
-    loadDashboardData();
-    
-    // Setup UI
-    updateStats();
-    renderMethodsGrid();
-    renderActivity();
-    updateChartWithRealData();
-    
-    // Setup real-time updates
-    startRealTimeUpdates();
-    
-    // Add UI enhancements
-    addRefreshButton();
-    addDataManagementButtons();
-    addRealtimeIndicator();
-    
-    // Initial animation
-    setTimeout(() => {
-        document.querySelectorAll('.stat-card').forEach((card, i) => {
-            card.style.animationDelay = `${i * 0.1}s`;
-        });
-    }, 100);
-    
-    console.log('✅ Dashboard initialized successfully');
-}
+    setInterval(() => {
+      loadDashboardData();
+      updateStats();
+    }, 2000);
+  }
 
-// Add real-time indicator
-function addRealtimeIndicator() {
+  function addRefreshButton() {
+    const headerRight = document.querySelector('.dashboard-header .header-right');
+    if (!headerRight || headerRight.querySelector('.refresh-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'auth-btn refresh-btn';
+    btn.textContent = 'Refresh';
+    btn.onclick = () => {
+      loadDashboardData();
+      updateStats();
+      renderMethodsGrid();
+      renderActivity();
+    };
+    headerRight.appendChild(btn);
+  }
+
+  function addRealtimeIndicator() {
     const indicator = document.createElement('div');
     indicator.className = 'realtime-indicator';
     indicator.innerHTML = `
-        <div class="realtime-dot"></div>
-        <span>LIVE</span>
+      <div class="realtime-dot"></div>
+      <span>LIVE</span>
     `;
-    
+
     document.body.appendChild(indicator);
-    
-    // Update time
     setInterval(() => {
-        indicator.querySelector('span').textContent = `LIVE • ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+      indicator.querySelector('span').textContent = `LIVE • ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     }, 30000);
-}
+  }
 
-// Make sure to call initDashboard on page load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initDashboard);
-} else {
-    initDashboard();
-    
-    header.style.position = 'relative';
-    header.appendChild(refreshBtn);
-}
-
-// Call this in initDashboard():
-addRefreshButton();
-// Add these functions to dashboard.html:
-
-function exportDashboardData() {
+  function exportDashboardData() {
     try {
-        const data = localStorage.getItem('andromeda_dashboard_v2');
-        if (!data) {
-            alert('No dashboard data to export');
-            return;
-        }
-        
-        const blob = new Blob([data], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `andromeda-dashboard-${Date.now()}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        alert('Dashboard data exported successfully!');
+      const data = localStorage.getItem('andromeda_dashboard_v2');
+      if (!data) {
+        alert('No dashboard data to export');
+        return;
+      }
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `andromeda-dashboard-${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      alert('Dashboard data exported successfully!');
     } catch (error) {
-        console.error('Export failed:', error);
-        alert('Export failed: ' + error.message);
+      console.error('Export failed:', error);
+      alert('Export failed: ' + error.message);
     }
-}
+  }
 
-function importDashboardData() {
+  function importDashboardData() {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
-    
+
     input.onchange = function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            try {
-                const data = JSON.parse(event.target.result);
-                
-                // Validate data structure
-                if (!data.methodUsage || !data.websiteHistory) {
-                    throw new Error('Invalid dashboard data format');
-                }
-                
-                localStorage.setItem('andromeda_dashboard_v2', JSON.stringify(data));
-                
-                // Reload dashboard
-                loadDashboardData();
-                updateStats();
-                renderMethodsGrid();
-                renderActivity();
-                
-                alert('Dashboard data imported successfully!');
-            } catch (error) {
-                console.error('Import failed:', error);
-                alert('Import failed: ' + error.message);
-            }
-        };
-        
-        reader.readAsText(file);
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const data = JSON.parse(event.target.result);
+          if (!data.methodUsage || !data.websiteHistory) {
+            throw new Error('Invalid dashboard data format');
+          }
+          localStorage.setItem('andromeda_dashboard_v2', JSON.stringify(data));
+          loadDashboardData();
+          updateStats();
+          renderMethodsGrid();
+          renderActivity();
+          alert('Dashboard data imported successfully!');
+        } catch (error) {
+          console.error('Import failed:', error);
+          alert('Import failed: ' + error.message);
+        }
+      };
+      reader.readAsText(file);
     };
-    
     input.click();
-}
+  }
 
-// Add export/import buttons to dashboard:
-function addDataManagementButtons() {
+  function addDataManagementButtons() {
     const footer = document.querySelector('.dashboard-footer');
+    if (!footer || footer.querySelector('.data-management-buttons')) return;
+
     const container = document.createElement('div');
+    container.className = 'data-management-buttons';
     container.style.cssText = `
-        margin-top: 10px;
-        display: flex;
-        gap: 10px;
-        justify-content: center;
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
     `;
-    
+
     container.innerHTML = `
-        <button onclick="exportDashboardData()" style="
-            background: rgba(80,200,255,0.2);
-            border: 1px solid rgba(80,200,255,0.3);
-            color: var(--info);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-        ">📥 Export Data</button>
-        
-        <button onclick="importDashboardData()" style="
-            background: rgba(90,255,160,0.2);
-            border: 1px solid rgba(90,255,160,0.3);
-            color: var(--success);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-        ">📤 Import Data</button>
-        
-        <button onclick="resetDashboardData()" style="
-            background: rgba(255,80,80,0.2);
-            border: 1px solid rgba(255,80,80,0.3);
-            color: var(--danger);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-        ">🔄 Reset Data</button>
+      <button onclick="exportDashboardData()" style="
+        background: rgba(80,200,255,0.2);
+        border: 1px solid rgba(80,200,255,0.3);
+        color: var(--info);
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        cursor: pointer;
+      ">📥 Export Data</button>
+      <button onclick="importDashboardData()" style="
+        background: rgba(90,255,160,0.2);
+        border: 1px solid rgba(90,255,160,0.3);
+        color: var(--success);
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        cursor: pointer;
+      ">📤 Import Data</button>
+      <button onclick="resetDashboardData()" style="
+        background: rgba(255,80,80,0.2);
+        border: 1px solid rgba(255,80,80,0.3);
+        color: var(--danger);
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        cursor: pointer;
+      ">🔄 Reset Data</button>
     `;
-    
+
     footer.appendChild(container);
-}
+  }
 
-function resetDashboardData() {
+  function resetDashboardData() {
     if (confirm('Reset all dashboard data? This cannot be undone!')) {
-        localStorage.removeItem('andromeda_dashboard_v2');
-        
-        // Reset to defaults
-        dashboardData = {
-            totalSessions: 1,
-            pagesVisited: 0,
-            totalTime: 0,
-            recentActivity: [
-                { 
-                    title: 'Dashboard Reset', 
-                    time: 'Just now',
-                    type: 'system',
-                    timestamp: Date.now()
-                }
-            ],
-            lastVisitedWebsite: null,
-            lastUsedMethod: null,
-            methodUsage: { main: 0, blank: 0, anticlose: 0 },
-            websiteHistory: [],
-            sessionStartTime: Date.now()
-        };
-        
-        saveDashboardData();
-        updateStats();
-        renderMethodsGrid();
-        renderActivity();
-        
-        alert('Dashboard data reset successfully!');
+      localStorage.removeItem('andromeda_dashboard_v2');
+      dashboardData = {
+        totalSessions: 1,
+        pagesVisited: 0,
+        totalTime: 0,
+        recentActivity: [
+          {
+            title: 'Dashboard Reset',
+            time: 'Just now',
+            type: 'system',
+            timestamp: Date.now()
+          }
+        ],
+        lastVisitedWebsite: null,
+        lastUsedMethod: null,
+        methodUsage: { main: 0, blank: 0, anticlose: 0 },
+        websiteHistory: [],
+        sessionStartTime: Date.now()
+      };
+      saveDashboardData();
+      updateStats();
+      renderMethodsGrid();
+      renderActivity();
+      alert('Dashboard data reset successfully!');
     }
-}
+  }
 
-// Call this in initDashboard():
-addDataManagementButtons();
+  function initDashboard() {
+    console.log('🚀 Initializing Andromeda Dashboard...');
+    initializeAuth();
+    loadDashboardData();
+    updateStats();
+    renderMethodsGrid();
+    renderActivity();
+    updateChart();
+    startRealTimeUpdates();
+    addRefreshButton();
+    addDataManagementButtons();
+    addRealtimeIndicator();
+    document.querySelectorAll('.stat-card').forEach((card, i) => {
+      card.style.animationDelay = `${i * 0.06}s`;
+    });
+    console.log('✅ Dashboard initialized successfully');
+  }
 
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDashboard);
+  } else {
+    initDashboard();
+  }
 </script>
 
 

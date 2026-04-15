@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temp Email Generator - Andromeda 🪐</title>
+  <link rel="icon" href="AndromedaLogo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #04040d;
+      --panel: rgba(10,11,28,0.9);
+      --accent: #6a5cff;
+      --accent2: #a78bfa;
+      --text: #dde0ff;
+      --muted: rgba(200,205,255,0.7);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: radial-gradient(circle at top, rgba(106,92,255,0.16), transparent 30%), #060614; color: var(--text); font-family: 'Rajdhani', sans-serif; }
+    body { display: grid; place-items: center; padding: 28px; }
+    .panel { width: min(720px,100%); background: var(--panel); border: 1px solid rgba(106,92,255,0.24); border-radius: 28px; padding: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); }
+    .panel h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(28px, 5vw, 42px); letter-spacing: 2px; margin-bottom: 12px; }
+    .panel p { color: var(--muted); line-height: 1.8; margin-bottom: 24px; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 24px; }
+    .btn { padding: 14px 22px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; font-family: 'Orbitron', sans-serif; font-size: 14px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .btn.secondary { background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid rgba(255,255,255,0.12); }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(106,92,255,0.24); }
+    .output { min-height: 82px; background: rgba(4,4,13,0.75); border: 1px solid rgba(106,92,255,0.18); border-radius: 18px; padding: 22px; font-size: 16px; word-break: break-all; line-height: 1.5; font-family: 'Courier New', monospace; color: #b8c0ff; display: grid; place-items: center; }
+    .note { margin-top: 18px; color: var(--muted); font-size: 13px; }
+    .panel input, .panel textarea { width: 100%; border-radius: 14px; border: 1px solid rgba(106,92,255,0.18); background: rgba(8,8,22,0.9); color: var(--text); padding: 14px 16px; margin-top: 10px; font-family: 'Rajdhani', sans-serif; font-size: 14px; }
+    .panel textarea { min-height: 100px; resize: vertical; }
+    .panel-block { background: rgba(4,4,13,0.75); border: 1px solid rgba(106,92,255,0.18); border-radius: 18px; padding: 22px; margin-top: 20px; }
+    .block-title { font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent2); margin-bottom: 14px; }
+    .inbox-list { display: grid; gap: 12px; max-height: 360px; overflow-y: auto; }
+    .item { background: rgba(8,8,22,0.9); border: 1px solid rgba(106,92,255,0.12); border-radius: 16px; padding: 18px; }
+    .item strong { display: block; margin-bottom: 8px; }
+    .item small { color: var(--muted); }
+    .empty-state { color: var(--muted); padding: 18px; text-align: center; }
+    a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <h1>Temporary Email Generator</h1>
+    <p>Generate a disposable email address instantly for quick sign-ups, verification, or one-time messages. The form below sends real email through the configured backend service.</p>
+    <div class="button-row">
+      <button id="generateBtn" class="btn" type="button">Generate Email</button>
+      <button id="copyBtn" class="btn" type="button">Copy to Clipboard</button>
+      <button id="sendToEmailBtn" class="btn" type="button">Send Email</button>
+      <button id="downloadJsonBtn" class="btn" type="button">Download JSON</button>
+    </div>
+    <label for="recipientEmail">Send email to</label>
+    <input id="recipientEmail" type="email" placeholder="recipient@example.com">
+    <label for="emailSubject">Subject</label>
+    <input id="emailSubject" type="text" placeholder="Subject for the email">
+    <label for="emailBody">Message</label>
+    <textarea id="emailBody" placeholder="Write your email message..."></textarea>
+    <div id="emailOutput" class="output">Press generate to create a temporary email address.</div>
+    <div id="statusMessage" class="note">No temporary email generated yet.</div>
+    <div id="fromEmailInfo" class="note"></div>
+    <p class="note">This page now sends real email through the configured backend. The generated address is a temporary alias for replies; actual delivery is handled by a real SMTP gateway.</p>
+    <section class="panel-block">
+      <div class="block-title">Sent Email Log</div>
+      <div id="sentEmails" class="inbox-list">
+        <div class="empty-state">No messages sent yet. Generate an address and send a real email.</div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const output = document.getElementById('emailOutput');
+    const generateBtn = document.getElementById('generateBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const sendToEmailBtn = document.getElementById('sendToEmailBtn');
+    const downloadJsonBtn = document.getElementById('downloadJsonBtn');
+    const recipientEmail = document.getElementById('recipientEmail');
+    const emailSubject = document.getElementById('emailSubject');
+    const emailBody = document.getElementById('emailBody');
+    const sentEmails = document.getElementById('sentEmails');
+    const statusMessage = document.getElementById('statusMessage');
+    const fromEmailInfo = document.getElementById('fromEmailInfo');
+
+    const domains = ['tempmail.net','disposablemail.com','maildrop.cc','tempmail.xyz','quickemail.org'];
+    const sentMessages = [];
+    let currentEmail = '';
+    let configuredFromEmail = '';
+
+    const randomPart = () => Math.random().toString(36).substring(2, 11);
+    const buildEmail = () => `${randomPart()}@${domains[Math.floor(Math.random() * domains.length)]}`;
+
+    function setStatus(text, error = false) {
+      statusMessage.textContent = text;
+      statusMessage.style.color = error ? '#ff9ca8' : 'var(--muted)';
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      const success = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      return success ? Promise.resolve() : Promise.reject();
+    }
+
+    function renderSentEmails() {
+      sentEmails.innerHTML = '';
+      if (sentMessages.length === 0) {
+        sentEmails.innerHTML = '<div class="empty-state">No messages sent yet. Generate an address and send a real email.</div>';
+        return;
+      }
+      sentMessages.slice().reverse().forEach(email => {
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.innerHTML = `
+          <strong>${email.subject}</strong>
+          <small>To: ${email.to} · ${email.time}</small>
+          <p style="margin-top:10px;color:rgba(200,205,255,0.85);line-height:1.6;">${email.body}</p>
+        `;
+        sentEmails.appendChild(item);
+      });
+    }
+
+    function logSentEmail(to, subject, body) {
+      sentMessages.push({ to, subject, body, time: new Date().toLocaleTimeString() });
+      renderSentEmails();
+    }
+
+    function createEmailPayload(email) {
+      return {
+        email,
+        generatedAt: new Date().toISOString(),
+        configuredFromEmail,
+        replyTo: email,
+        sentMessages,
+        lastSentTo: recipientEmail.value.trim() || null,
+        subject: emailSubject.value.trim() || null,
+        instructions: 'Use this temporary email address as an alias. Actual delivery is handled by the configured SMTP gateway.'
+      };
+    }
+
+    function downloadJson(email) {
+      const payload = createEmailPayload(email);
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'temporary-email.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    }
+
+    function generateEmail() {
+      currentEmail = buildEmail();
+      output.textContent = currentEmail;
+      copyBtn.disabled = false;
+      sendToEmailBtn.disabled = false;
+      downloadJsonBtn.disabled = false;
+      sentMessages.length = 0;
+      renderSentEmails();
+      copyBtn.textContent = 'Copy to Clipboard';
+      sendToEmailBtn.textContent = 'Send Email';
+      downloadJsonBtn.textContent = 'Download JSON';
+      setStatus(`Temporary email ${currentEmail} generated successfully.`);
+    }
+
+    function copyEmail() {
+      if (!currentEmail) return;
+      copyText(currentEmail).then(() => {
+        copyBtn.textContent = 'Copied!';
+        setStatus('Email address copied to clipboard.');
+        setTimeout(() => { copyBtn.textContent = 'Copy to Clipboard'; }, 1200);
+      }).catch(() => {
+        copyBtn.textContent = 'Copy Failed';
+        setStatus('Clipboard copy failed. You can copy the address manually.', true);
+      });
+    }
+
+    async function downloadEmailJson() {
+      if (!currentEmail) return;
+      downloadJson(currentEmail);
+      downloadJsonBtn.textContent = 'Downloaded';
+      setStatus('Temporary email payload downloaded as JSON.');
+      setTimeout(() => { downloadJsonBtn.textContent = 'Download JSON'; }, 1200);
+    }
+
+    async function sendEmail() {
+      if (!currentEmail) {
+        setStatus('Generate a temporary email first.', true);
+        return;
+      }
+      const target = recipientEmail.value.trim();
+      if (!target || !isValidEmail(target)) {
+        setStatus('Enter a valid recipient email address first.', true);
+        return;
+      }
+      const subject = emailSubject.value.trim() || 'Temporary message from Andromeda';
+      const body = emailBody.value.trim() || 'This is a temporary message sent from your generated email address.';
+      sendToEmailBtn.disabled = true;
+      sendToEmailBtn.textContent = 'Sending...';
+      try {
+        const response = await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ recipient: target, subject, body, alias: currentEmail })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to send email.');
+        }
+
+        logSentEmail(target, subject, body);
+        setStatus(`Email sent to ${target}.`);
+        sendToEmailBtn.textContent = 'Email Sent';
+      } catch (error) {
+        setStatus(`Email sending failed: ${error.message}`, true);
+      } finally {
+        sendToEmailBtn.disabled = false;
+        setTimeout(() => { sendToEmailBtn.textContent = 'Send Email'; }, 1500);
+      }
+    }
+
+    async function loadConfig() {
+      try {
+        const response = await fetch('/api/config');
+        if (!response.ok) {
+          throw new Error('Unable to load backend configuration.');
+        }
+        const config = await response.json();
+        configuredFromEmail = config.emailFrom || '';
+        fromEmailInfo.textContent = configuredFromEmail ? `Emails are sent from ${configuredFromEmail}.` : 'Email backend is not configured. Set up the SMTP service to enable delivery.';
+      } catch (error) {
+        fromEmailInfo.textContent = 'Unable to load email backend configuration.';
+      }
+    }
+
+    generateBtn.addEventListener('click', generateEmail);
+    copyBtn.addEventListener('click', copyEmail);
+    sendToEmailBtn.addEventListener('click', sendEmail);
+    downloadJsonBtn.addEventListener('click', downloadEmailJson);
+
+    window.addEventListener('load', () => {
+      copyBtn.disabled = true;
+      sendToEmailBtn.disabled = true;
+      downloadJsonBtn.disabled = true;
+      renderSentEmails();
+      setStatus('No temporary email created yet.');
+      loadConfig();
+    });
+  </script>
+</body>
+</html>

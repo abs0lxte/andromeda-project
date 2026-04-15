@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Andromeda 🪐</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #02020a;
+      --panel: rgba(8,8,24,0.95);
+      --accent: #6a5cff;
+      --accent2: #a78bfa;
+      --text: #e9ecff;
+      --muted: rgba(200,205,255,0.72);
+      --border: rgba(106,92,255,0.18);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: radial-gradient(circle at top, rgba(106,92,255,0.14), transparent 28%), #03030d; color: var(--text); font-family: 'Rajdhani', sans-serif; }
+    body { display: grid; place-items: center; padding: 24px; }
+    .container { width: min(980px,100%); display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; }
+    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 28px; padding: 32px; box-shadow: 0 28px 80px rgba(0,0,0,0.32); }
+    .hero { display: grid; gap: 18px; }
+    .hero h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(34px, 5vw, 46px); letter-spacing: 2px; }
+    .hero p { color: var(--muted); line-height: 1.8; }
+    .auth-form { display: grid; gap: 14px; }
+    .auth-form label { font-size: 13px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+    .auth-form input { width: 100%; border-radius: 14px; border: 1px solid var(--border); background: rgba(10,10,24,0.92); color: var(--text); padding: 14px 16px; font-size: 14px; }
+    .auth-form .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+    .btn, .link-btn { border: none; border-radius: 14px; padding: 14px 20px; font-family: 'Orbitron', sans-serif; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+    .btn:hover, .link-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(106,92,255,0.18); }
+    .link-btn { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--border); text-decoration: none; }
+    .status { color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .status.error { color: #ff9aa2; }
+    .env-note { color: var(--accent2); font-size: 13px; line-height: 1.7; }
+    .env-note a { color: var(--accent); text-decoration: underline; }
+    .feature-list { display: grid; gap: 14px; margin-top: 16px; }
+    .feature-card { padding: 18px; border-radius: 18px; background: rgba(14,14,36,0.85); border: 1px solid var(--border); }
+    .feature-card strong { display: block; margin-bottom: 8px; color: #fff; }
+    .feature-card p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .footer { margin-top: 18px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="panel hero">
+      <span style="color: var(--accent2); font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">Login Hub</span>
+      <h1>Welcome to Andromeda</h1>
+      <p>Sign in or create an account to save dashboard data, preferences, and unlock a personalized workspace. If you want real email or SMS delivery, set up <code>.env</code> from <code>.env.example</code>.</p>
+      <div class="feature-list">
+        <div class="feature-card"><strong>Temp Email</strong><p>Send real email through SMTP once backend is configured.</p></div>
+        <div class="feature-card"><strong>Temp Phone</strong><p>Use Twilio to send SMS from a temporary phone number.</p></div>
+        <div class="feature-card"><strong>Proxy Tools</strong><p>Discover unblocker methods and browse demo links inside the dashboard.</p></div>
+      </div>
+      <div class="footer">Already have an account? Sign in here and then return to <a href="dashboard.html" class="link-btn" style="display:inline-block; padding:10px 14px;">Dashboard</a>.</div>
+    </section>
+
+    <section class="panel auth-form-panel">
+      <h2 style="font-family:'Orbitron',sans-serif; letter-spacing:2px; margin-bottom:14px;">Sign In / Sign Up</h2>
+      <form class="auth-form" id="loginForm">
+        <label for="loginEmail">Email address</label>
+        <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="username" required>
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" required>
+        <div id="confirmGroup" style="display:none;">
+          <label for="loginConfirmPassword">Confirm password</label>
+          <input id="loginConfirmPassword" type="password" placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <div class="actions">
+          <button type="button" id="submitBtn" class="btn">Sign In</button>
+          <button type="button" id="toggleModeBtn" class="link-btn">Create account</button>
+        </div>
+      </form>
+      <p class="status" id="loginStatus">Use the form above to sign in or create a guest account locally.</p>
+      <p class="env-note">For optional real email/SMS features, copy <a href=".env.example" target="_blank">.env.example</a> to <code>.env</code> and configure SMTP and Twilio credentials.</p>
+      <a href="dashboard.html" class="link-btn" style="width:100%; text-align:center;">Go to Dashboard</a>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'andromeda_user_auth';
+    let signupMode = false;
+
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginConfirmPassword = document.getElementById('loginConfirmPassword');
+    const confirmGroup = document.getElementById('confirmGroup');
+    const submitBtn = document.getElementById('submitBtn');
+    const toggleModeBtn = document.getElementById('toggleModeBtn');
+    const loginStatus = document.getElementById('loginStatus');
+
+    function stringifyBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      bytes.forEach(byte => binary += String.fromCharCode(byte));
+      return btoa(binary);
+    }
+
+    async function hashPassword(password) {
+      if (window.crypto && window.crypto.subtle) {
+        const data = new TextEncoder().encode(password);
+        const hash = await crypto.subtle.digest('SHA-256', data);
+        return stringifyBase64(hash);
+      }
+      return btoa(password);
+    }
+
+    function saveCredentials(email, passwordHash) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, passwordHash }));
+    }
+
+    function loadCredentials() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setStatus(text, error = false) {
+      loginStatus.textContent = text;
+      loginStatus.className = error ? 'status error' : 'status';
+    }
+
+    function updateMode() {
+      signupMode = !signupMode;
+      if (signupMode) {
+        submitBtn.textContent = 'Sign Up';
+        toggleModeBtn.textContent = 'Already have an account?';
+        confirmGroup.style.display = 'block';
+        setStatus('Create your account to save settings locally.');
+      } else {
+        submitBtn.textContent = 'Sign In';
+        toggleModeBtn.textContent = 'Create account';
+        confirmGroup.style.display = 'none';
+        setStatus('Sign in with your email and password.');
+      }
+    }
+
+    async function handleSubmit() {
+      const email = loginEmail.value.trim().toLowerCase();
+      const password = loginPassword.value;
+      const confirmation = loginConfirmPassword.value;
+
+      if (!email || !password) {
+        setStatus('Please fill in both email and password.', true);
+        return;
+      }
+
+      if (signupMode) {
+        if (password !== confirmation) {
+          setStatus('Passwords must match.', true);
+          return;
+        }
+        const passwordHash = await hashPassword(password);
+        saveCredentials(email, passwordHash);
+        setStatus('Account created! You can now sign in or visit the dashboard.');
+        signupMode = false;
+        updateMode();
+        return;
+      }
+
+      const saved = loadCredentials();
+      if (!saved) {
+        setStatus('No account found yet. Please create one first.', true);
+        return;
+      }
+      const passwordHash = await hashPassword(password);
+      if (saved.email !== email || saved.passwordHash !== passwordHash) {
+        setStatus('Email or password incorrect.', true);
+        return;
+      }
+      setStatus('Signed in successfully! Redirecting to dashboard...');
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 800);
+    }
+
+    submitBtn.addEventListener('click', handleSubmit);
+    toggleModeBtn.addEventListener('click', updateMode);
+    updateMode();
+  </script>
+</body>
+</html>
