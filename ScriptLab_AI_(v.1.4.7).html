@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ScriptLab AI</title>
+  <link rel="icon" href="https://www.shutterstock.com/image-vector/ai-generate-logo-artificial-intelligence-600nw-2519534733.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============ PREMIUM DESIGN TOKENS ============ */
+    :root{
+      /* Obsidian + Aurora palette */
+      --bg:#070711;--bg2:#0b0a18;--bg3:#11102a;
+      --panel:rgba(20,18,38,.62);
+      --panel-solid:#141226;
+      --panel-2:rgba(28,24,52,.55);
+      --line:rgba(232,225,255,.09);
+      --line-strong:rgba(232,225,255,.18);
+      --txt:#f1ecff;
+      --txt-2:#d6cfee;
+      --muted:#8b86a8;
+      --muted-2:#6c6788;
+
+      /* Aurora accents (gold → violet → cyan) */
+      --gold:#e9c777;
+      --gold-2:#f5d98a;
+      --violet:#9b7cff;
+      --violet-2:#c89bff;
+      --cyan:#5ad0ff;
+      --rose:#ff8da8;
+      --accent:var(--violet);
+
+      --ok:#3ad9a0;--warn:#f4bf5f;--danger:#ff6b81;
+      --safe:env(safe-area-inset-bottom,0px);
+
+      --shadow-sm:0 4px 14px rgba(0,0,0,.3);
+      --shadow:0 14px 40px rgba(0,0,0,.45);
+      --shadow-lg:0 28px 80px rgba(0,0,0,.55);
+      --shadow-glow:0 0 0 1px color-mix(in srgb,var(--violet),transparent 65%),0 14px 50px color-mix(in srgb,var(--violet),transparent 65%);
+      --shadow-gold:0 14px 50px color-mix(in srgb,var(--gold),transparent 70%);
+
+      --grad-primary:linear-gradient(130deg,var(--violet) 0%,var(--violet-2) 45%,var(--cyan) 100%);
+      --grad-gold:linear-gradient(130deg,#b88b3c,var(--gold) 50%,var(--gold-2));
+      --grad-aurora:conic-gradient(from 200deg at 50% 50%,var(--violet),var(--cyan),var(--gold),var(--rose),var(--violet));
+      --grad-text:linear-gradient(115deg,#fff 10%,var(--violet-2) 55%,var(--cyan) 95%);
+      --grad-text-gold:linear-gradient(115deg,#fff 0%,var(--gold-2) 55%,var(--gold));
+      --grad-panel:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.005));
+
+      --radius:14px;--radius-lg:18px;--radius-xl:24px;
+      --fz-title:15px;--fz-body:14px;--fz-caption:12px;
+      --ease:cubic-bezier(.2,.8,.2,1);
+      --ease-back:cubic-bezier(.34,1.56,.64,1);
+      --serif:'Instrument Serif',ui-serif,Georgia,serif;
+      --mono:'JetBrains Mono',ui-monospace,monospace;
+    }
+    html[data-theme=light]{
+      --bg:#f4f1fb;--bg2:#faf7ff;--bg3:#ffffff;
+      --panel:rgba(255,255,255,.78);--panel-solid:#ffffff;
+      --panel-2:rgba(248,245,255,.7);
+      --line:rgba(60,42,120,.12);--line-strong:rgba(60,42,120,.22);
+      --txt:#1c1538;--txt-2:#2c244c;--muted:#67608a;--muted-2:#888299;
+      --shadow:0 12px 30px rgba(60,42,120,.14);
+      --shadow-lg:0 24px 60px rgba(60,42,120,.18);
+      --grad-text:linear-gradient(115deg,#1c1538 10%,var(--violet) 55%,var(--cyan) 95%);
+    }
+
+    /* ============ BASE ============ */
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--txt);letter-spacing:.005em;-webkit-font-smoothing:antialiased}
+    body{
+      background:
+        radial-gradient(1100px 720px at -10% -14%, color-mix(in srgb,var(--violet),transparent 84%), transparent 60%),
+        radial-gradient(900px 600px at 110% 8%, color-mix(in srgb,var(--cyan),transparent 88%), transparent 55%),
+        radial-gradient(800px 600px at 50% 120%, color-mix(in srgb,var(--gold),transparent 92%), transparent 55%),
+        linear-gradient(165deg,var(--bg),var(--bg2));
+      background-attachment:fixed;
+    }
+    /* Subtle grain */
+    body::before{
+      content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.035;
+      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");
+      mix-blend-mode:overlay;
+    }
+    button,input,textarea,select{font:inherit;color:inherit}
+    button{border:none;background:none;cursor:pointer;transition:transform .2s var(--ease),background .2s var(--ease),box-shadow .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease)}
+    ::selection{background:color-mix(in srgb,var(--violet),transparent 55%);color:#fff}
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--txt),transparent 88%);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+    ::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--violet),transparent 50%);background-clip:padding-box;border:2px solid transparent}
+
+    /* ============ APP SHELL ============ */
+    .app{height:100%;display:grid;grid-template-rows:64px 1fr;animation:appIn .5s var(--ease) both;position:relative;z-index:1}
+    @keyframes appIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+    .top{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 18px;border-bottom:1px solid var(--line);
+      background:var(--panel);backdrop-filter:blur(18px) saturate(160%);
+      -webkit-backdrop-filter:blur(18px) saturate(160%);
+      box-shadow:var(--shadow-sm);
+      position:relative;z-index:5;
+    }
+    .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:15px;letter-spacing:.2px}
+    .logo{
+      width:32px;height:32px;border-radius:10px;
+      background:var(--grad-primary);
+      display:grid;place-items:center;color:#fff;font-weight:900;
+      box-shadow:var(--shadow-glow);
+      position:relative;overflow:hidden;
+      animation:logoFloat 7s var(--ease) infinite;
+    }
+    .logo::after{
+      content:"";position:absolute;inset:-2px;border-radius:inherit;
+      background:var(--grad-aurora);opacity:.55;filter:blur(10px);z-index:-1;
+      animation:spin 12s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .logo svg{width:18px;height:18px;position:relative;z-index:1}
+    @keyframes logoFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-2px) rotate(-3deg)}}
+    .brand-title{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .ver{
+      font-size:9.5px;font-weight:700;letter-spacing:1px;
+      background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent;
+      border:1px solid color-mix(in srgb,var(--gold),transparent 70%);
+      padding:3px 7px;border-radius:7px;text-transform:uppercase;
+      box-shadow:inset 0 0 12px color-mix(in srgb,var(--gold),transparent 88%);
+    }
+
+    .tabs{display:flex;gap:4px;background:rgba(255,255,255,.025);padding:4px;border-radius:999px;border:1px solid var(--line)}
+    .tab{padding:6px 14px;border-radius:999px;color:var(--muted);font-size:13px;font-weight:500;transition:color .2s var(--ease)}
+    .tab:hover{color:var(--txt)}
+    .tab.active{color:#fff;background:var(--grad-primary);box-shadow:0 4px 16px color-mix(in srgb,var(--violet),transparent 65%)}
+
+    .icon,.btn{
+      padding:9px 13px;border:1px solid var(--line);border-radius:11px;
+      background:rgba(255,255,255,.025);color:var(--txt);font-size:13px;font-weight:500;
+      display:inline-flex;align-items:center;gap:6px;
+      transition:transform .2s var(--ease),background .2s var(--ease),border-color .2s var(--ease),box-shadow .2s var(--ease);
+    }
+    .icon:hover,.btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.06);border-color:var(--line-strong)}
+    .icon:active,.btn:active{transform:translateY(0) scale(.98)}
+    .btn.primary{
+      background:var(--grad-primary);color:#fff;border-color:transparent;
+      box-shadow:0 10px 28px color-mix(in srgb,var(--violet),transparent 65%);
+      position:relative;overflow:hidden;
+    }
+    .btn.primary::after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.3),transparent 70%);
+      transform:translateX(-100%);transition:transform .7s var(--ease);
+    }
+    .btn.primary:hover::after{transform:translateX(100%)}
+    .btn.primary:hover{box-shadow:0 14px 36px color-mix(in srgb,var(--violet),transparent 55%)}
+    .btn.gold{
+      background:var(--grad-gold);color:#1a1230;border-color:transparent;font-weight:700;
+      box-shadow:var(--shadow-gold);
+    }
+    .btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+    .btn.ghost:hover{color:var(--txt);background:rgba(255,255,255,.05)}
+    .btn[disabled]{opacity:.45;pointer-events:none}
+
+    /* PRO badge */
+    .pro-badge{
+      display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;
+      font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
+      background:color-mix(in srgb,var(--gold),transparent 88%);
+      border:1px solid color-mix(in srgb,var(--gold),transparent 65%);
+      color:var(--gold-2);
+    }
+    .pro-badge.lit{background:var(--grad-gold);color:#1a1230;border-color:transparent;box-shadow:var(--shadow-gold)}
+
+    /* ============ MAIN GRID ============ */
+    .main{min-height:0;display:grid;grid-template-columns:300px 1fr;gap:14px;padding:14px}
+    .panel{
+      min-height:0;border:1px solid var(--line);border-radius:var(--radius-lg);
+      background:var(--panel);backdrop-filter:blur(16px) saturate(150%);
+      -webkit-backdrop-filter:blur(16px) saturate(150%);
+      overflow:hidden;box-shadow:var(--shadow);
+      position:relative;
+    }
+    .panel::before{
+      content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+      background:var(--grad-panel);
+    }
+    /* Top hairline highlight */
+    .panel::after{
+      content:"";position:absolute;left:0;right:0;top:0;height:1px;pointer-events:none;
+      background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--violet),transparent 50%),color-mix(in srgb,var(--cyan),transparent 60%),transparent);
+      opacity:.7;
+    }
+    .side{display:grid;grid-template-rows:auto auto auto 1fr;gap:10px;padding:12px;position:relative;z-index:1}
+    .stack{
+      border:1px solid var(--line);border-radius:12px;
+      overflow:auto;background:rgba(255,255,255,.012);
+    }
+    .item{
+      padding:11px 12px;border-bottom:1px solid var(--line);
+      display:flex;justify-content:space-between;align-items:center;gap:8px;
+      font-size:13px;cursor:pointer;
+      transition:background .15s var(--ease),padding-left .2s var(--ease);
+      animation:itemIn .3s var(--ease) both;
+    }
+    @keyframes itemIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+    .item:last-child{border-bottom:none}
+    .item:hover{background:rgba(255,255,255,.04);padding-left:14px}
+    .item.active{
+      background:linear-gradient(90deg,color-mix(in srgb,var(--violet),transparent 84%),transparent);
+      border-left:2px solid var(--violet);padding-left:13px;
+    }
+    .item.active:hover{padding-left:15px}
+    .item.pin::before{content:"📌";margin-right:6px;font-size:11px}
+
+    .search{
+      padding:10px 12px;border:1px solid var(--line);border-radius:11px;
+      background:rgba(255,255,255,.025);width:100%;outline:none;
+      transition:border-color .2s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease);
+    }
+    .search::placeholder,.field::placeholder,textarea::placeholder{color:var(--muted-2)}
+    .search:focus,.field:focus,textarea:focus{
+      border-color:color-mix(in srgb,var(--violet),transparent 50%);
+      box-shadow:0 0 0 4px color-mix(in srgb,var(--violet),transparent 86%);
+      background:rgba(255,255,255,.04);
+    }
+
+    /* ============ CHAT ============ */
+    .chat{display:grid;grid-template-rows:auto 1fr auto auto;min-height:0;position:relative;z-index:1}
+    .head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+    .chip{
+      padding:5px 10px;border:1px solid var(--line);border-radius:999px;
+      font-size:11.5px;color:var(--muted);background:rgba(255,255,255,.02);
+      font-weight:500;display:inline-flex;align-items:center;gap:5px;
+      transition:all .2s var(--ease);
+    }
+    .chip:hover{color:var(--txt);border-color:var(--line-strong)}
+    .chip .dot{width:6px;height:6px;border-radius:999px;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+    .chip.gold{background:color-mix(in srgb,var(--gold),transparent 88%);border-color:color-mix(in srgb,var(--gold),transparent 65%);color:var(--gold-2)}
+    .chip.gold .dot{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+
+    .messages{min-height:0;overflow:auto;padding:18px 18px 6px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+    .msg{max-width:840px;animation:msgIn .35s var(--ease) both}
+    .msg.user{margin-left:auto;animation-name:msgInRight}
+    .msg.assistant{max-width:780px;animation-name:msgInLeft}
+    @keyframes msgInLeft{from{opacity:0;transform:translateY(8px) translateX(-6px)}to{opacity:1;transform:none}}
+    @keyframes msgInRight{from{opacity:0;transform:translateY(8px) translateX(6px)}to{opacity:1;transform:none}}
+
+    .bubble{
+      border:1px solid var(--line);border-radius:var(--radius);
+      padding:13px 15px;background:rgba(255,255,255,.025);
+      white-space:pre-wrap;word-break:break-word;line-height:1.62;font-size:var(--fz-body);
+      box-shadow:var(--shadow-sm);transition:border-color .2s var(--ease);
+    }
+    .bubble:hover{border-color:var(--line-strong)}
+    .msg.user .bubble{
+      background:linear-gradient(135deg,color-mix(in srgb,var(--violet),transparent 82%),color-mix(in srgb,var(--cyan),transparent 88%));
+      border-color:color-mix(in srgb,var(--violet),transparent 60%);
+    }
+    .msg.assistant .bubble code{background:rgba(0,0,0,.34);padding:1px 5px;border-radius:5px;font-family:var(--mono);font-size:12.5px}
+    .meta{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:6px;align-items:center;gap:8px}
+    .meta.compact{display:none}
+    .avatar{width:18px;height:18px;border-radius:6px;display:inline-grid;place-items:center;font-size:10px;font-weight:700;background:var(--grad-primary);color:#fff}
+    .meta.user-meta{flex-direction:row-reverse}
+
+    .bar{padding:10px 14px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:7px;background:rgba(255,255,255,.012)}
+    .composer{padding:12px 14px calc(12px + var(--safe));border-top:1px solid var(--line);display:grid;gap:10px;background:rgba(255,255,255,.015)}
+    textarea{
+      width:100%;min-height:88px;max-height:220px;resize:none;
+      border:1px solid var(--line);border-radius:12px;
+      background:rgba(255,255,255,.025);padding:13px 14px;outline:none;line-height:1.55;
+      transition:border-color .2s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease);
+    }
+    .composer-actions{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+    .slash-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+    .slash-row .btn{padding:6px 11px;font-size:12px}
+
+    /* ============ DRAWERS / OVERLAYS ============ */
+    .drawer,.overlay{position:fixed;inset:0;display:none;z-index:50}
+    .drawer.open,.overlay.open{display:block}
+    .overlay.open{display:flex;align-items:center;justify-content:center;background:rgba(4,4,12,.65);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);animation:fadeIn .25s var(--ease)}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .drawer.open{animation:fadeIn .25s var(--ease)}
+
+    .drawer-card{
+      position:absolute;right:14px;bottom:calc(94px + var(--safe));
+      width:min(500px,calc(100% - 28px));max-height:74%;
+      border:1px solid var(--line);border-radius:var(--radius-lg);
+      background:var(--panel-solid);overflow:hidden;
+      box-shadow:var(--shadow-lg);
+      animation:drawerIn .35s var(--ease-back);
+    }
+    @keyframes drawerIn{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:none}}
+    .dhead{padding:13px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+    .dbody{padding:14px;overflow:auto;max-height:52vh;display:grid;gap:10px}
+
+    .modal{
+      width:min(980px,96vw);max-height:92vh;overflow:auto;
+      border:1px solid var(--line);border-radius:var(--radius-xl);
+      background:var(--panel-solid);padding:22px;display:grid;gap:14px;
+      box-shadow:var(--shadow-lg);position:relative;
+      animation:modalIn .35s var(--ease-back);
+    }
+    .modal::before{
+      content:"";position:absolute;left:0;right:0;top:0;height:1px;
+      background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--violet),transparent 40%),color-mix(in srgb,var(--cyan),transparent 50%),transparent);
+    }
+    @keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+    .modal h3{margin:0;font-size:18px;font-weight:700}
+    .modal .sub{font-size:13px;color:var(--muted);margin-top:-4px}
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field{
+      width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;
+      background:rgba(255,255,255,.025);outline:none;
+      transition:all .2s var(--ease);
+    }
+    .label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:block}
+
+    /* Model picker tiles */
+    .model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:6px}
+    .model-tile{
+      padding:12px;border:1px solid var(--line);border-radius:14px;
+      background:rgba(255,255,255,.022);cursor:pointer;display:flex;flex-direction:column;gap:6px;
+      transition:all .2s var(--ease);position:relative;overflow:hidden;
+    }
+    .model-tile:hover{transform:translateY(-2px);border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+    .model-tile.active{
+      border-color:color-mix(in srgb,var(--violet),transparent 40%);
+      background:linear-gradient(135deg,color-mix(in srgb,var(--violet),transparent 86%),color-mix(in srgb,var(--cyan),transparent 92%));
+      box-shadow:0 0 0 2px color-mix(in srgb,var(--violet),transparent 70%);
+    }
+    .model-tile .mname{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:6px}
+    .model-tile .mprov{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+    .model-tile .mtags{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+    .mtag{font-size:10px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.05);color:var(--muted);font-weight:600;border:1px solid var(--line)}
+    .mtag.free{background:color-mix(in srgb,var(--ok),transparent 84%);color:var(--ok);border-color:color-mix(in srgb,var(--ok),transparent 60%)}
+    .mtag.fast{background:color-mix(in srgb,var(--cyan),transparent 84%);color:var(--cyan);border-color:color-mix(in srgb,var(--cyan),transparent 60%)}
+    .mtag.reason{background:color-mix(in srgb,var(--gold),transparent 86%);color:var(--gold-2);border-color:color-mix(in srgb,var(--gold),transparent 60%)}
+
+    /* ============ TOASTS ============ */
+    .toasts{position:fixed;right:14px;bottom:calc(14px + var(--safe));display:flex;flex-direction:column;gap:8px;z-index:200;pointer-events:none}
+    .toast{
+      padding:10px 14px;border:1px solid var(--line);border-radius:12px;
+      background:var(--panel-solid);font-size:12.5px;box-shadow:var(--shadow-lg);
+      animation:toastIn .35s var(--ease-back), toastOut .3s var(--ease) 2.9s forwards;
+      display:flex;align-items:center;gap:8px;pointer-events:auto;max-width:340px;
+    }
+    @keyframes toastIn{from{opacity:0;transform:translateX(40px) scale(.9)}to{opacity:1;transform:none}}
+    @keyframes toastOut{to{opacity:0;transform:translateX(40px) scale(.9)}}
+    .toast.error{border-color:color-mix(in srgb,var(--danger),transparent 50%);background:color-mix(in srgb,var(--danger),var(--panel-solid) 88%)}
+    .toast.success{border-color:color-mix(in srgb,var(--ok),transparent 50%);background:color-mix(in srgb,var(--ok),var(--panel-solid) 88%)}
+    .toast::before{content:"";width:6px;height:6px;border-radius:999px;background:var(--violet);box-shadow:0 0 8px var(--violet)}
+    .toast.success::before{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+    .toast.error::before{background:var(--danger);box-shadow:0 0 8px var(--danger)}
+
+    .kbd{font-size:11px;color:var(--muted);border:1px solid var(--line);padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.02);font-family:var(--mono)}
+
+    /* ============ TYPING ============ */
+    .typing{display:inline-flex;gap:5px;align-items:center;padding:4px 0}
+    .typing span{width:7px;height:7px;border-radius:999px;background:var(--violet);animation:pulse 1.2s infinite var(--ease);box-shadow:0 0 10px color-mix(in srgb,var(--violet),transparent 30%)}
+    .typing span:nth-child(2){animation-delay:.18s;background:var(--cyan);box-shadow:0 0 10px color-mix(in srgb,var(--cyan),transparent 30%)}
+    .typing span:nth-child(3){animation-delay:.36s;background:var(--gold);box-shadow:0 0 10px color-mix(in srgb,var(--gold),transparent 30%)}
+    @keyframes pulse{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1.05)}}
+
+    /* ============ EMPTY STATE ============ */
+    .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px 20px;text-align:center;color:var(--muted);animation:fadeIn .5s var(--ease)}
+    .empty .ico{width:72px;height:72px;border-radius:20px;background:var(--grad-primary);display:grid;place-items:center;box-shadow:var(--shadow-glow);animation:logoFloat 5s var(--ease) infinite;position:relative}
+    .empty .ico::after{content:"";position:absolute;inset:-4px;border-radius:inherit;background:var(--grad-aurora);opacity:.45;filter:blur(14px);z-index:-1;animation:spin 14s linear infinite}
+    .empty .ico svg{width:32px;height:32px;color:#fff}
+    .empty h4{margin:0;color:var(--txt);font-size:22px;font-weight:700;letter-spacing:-.3px;font-family:var(--serif);font-style:italic}
+    .empty h4 em{font-style:normal;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .empty p{margin:0;font-size:13.5px;max-width:420px;line-height:1.6}
+    .suggest{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+    .suggest .btn{font-size:12.5px}
+
+    /* ============ AUTH ============ */
+    .auth-wrap{position:fixed;inset:0;z-index:300;display:flex;align-items:stretch;justify-content:center;background:radial-gradient(900px 600px at 0% 0%, color-mix(in srgb,var(--violet),transparent 76%), transparent 60%),radial-gradient(800px 600px at 100% 100%, color-mix(in srgb,var(--cyan),transparent 80%), transparent 60%),linear-gradient(160deg,var(--bg),var(--bg2));animation:fadeIn .4s var(--ease)}
+    .auth-wrap.hide{display:none}
+    .auth-grid{display:grid;grid-template-columns:1.05fr .95fr;width:100%;height:100%}
+    .auth-hero{position:relative;overflow:hidden;padding:48px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(160deg,rgba(155,124,255,.12),rgba(90,208,255,.08) 60%,transparent);border-right:1px solid var(--line)}
+    .auth-hero::before{content:"";position:absolute;inset:-1px;pointer-events:none;background:radial-gradient(500px 400px at 20% 30%, color-mix(in srgb,var(--violet),transparent 68%), transparent 60%),radial-gradient(420px 360px at 80% 80%, color-mix(in srgb,var(--cyan),transparent 75%), transparent 60%);animation:auraDrift 14s var(--ease) infinite alternate}
+    @keyframes auraDrift{from{transform:translate(0,0) scale(1)}to{transform:translate(-20px,-10px) scale(1.05)}}
+    .auth-hero-inner{position:relative;z-index:1;display:flex;flex-direction:column;gap:22px;max-width:540px;margin:auto 0}
+    .auth-brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:20px;position:relative;z-index:1}
+    .auth-brand .logo{width:42px;height:42px;border-radius:13px}
+    .auth-brand .logo svg{width:24px;height:24px}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;color:var(--gold-2);font-weight:700;padding:5px 11px;border-radius:999px;background:color-mix(in srgb,var(--gold),transparent 88%);border:1px solid color-mix(in srgb,var(--gold),transparent 70%);width:fit-content;animation:slideUp .6s var(--ease) both}
+    .hero-title{font-size:50px;line-height:1.02;font-weight:800;margin:0;letter-spacing:-1.2px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;animation:slideUp .7s var(--ease) .1s both}
+    .hero-title em{font-family:var(--serif);font-style:italic;font-weight:500;background:var(--grad-text-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero-sub{font-size:15.5px;color:var(--txt-2);line-height:1.65;margin:0;max-width:480px;animation:slideUp .7s var(--ease) .2s both}
+    @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+    .feat-list{display:grid;gap:10px;margin-top:6px}
+    .feat{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--line);animation:slideUp .6s var(--ease) both;transition:transform .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease)}
+    .feat:hover{transform:translateX(4px);background:rgba(255,255,255,.05);border-color:var(--line-strong)}
+    .feat:nth-child(1){animation-delay:.3s}.feat:nth-child(2){animation-delay:.4s}.feat:nth-child(3){animation-delay:.5s}.feat:nth-child(4){animation-delay:.6s}
+    .feat-ico{width:36px;height:36px;border-radius:11px;flex:0 0 auto;background:color-mix(in srgb,var(--violet),transparent 80%);color:var(--violet-2);display:grid;place-items:center}
+    .feat-ico svg{width:18px;height:18px}
+    .feat strong{display:block;font-size:13.5px;margin-bottom:2px}
+    .feat span{font-size:12.5px;color:var(--muted);line-height:1.5}
+    .auth-foot{font-size:12px;color:var(--muted-2);position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center}
+    .auth-foot .stars{color:var(--gold)}
+
+    .auth-form-wrap{display:flex;align-items:center;justify-content:center;padding:48px 28px;overflow:auto}
+    .auth-card{width:100%;max-width:430px;display:flex;flex-direction:column;gap:18px;animation:slideUp .6s var(--ease) .2s both}
+    .auth-card h2{margin:0;font-size:28px;font-weight:800;letter-spacing:-.5px}
+    .auth-card .lead{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+    .auth-tabs{display:flex;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+    .auth-tab{flex:1;padding:10px 14px;border-radius:9px;color:var(--muted);font-size:13px;font-weight:600;transition:all .25s var(--ease)}
+    .auth-tab.active{background:var(--grad-primary);color:#fff;box-shadow:0 4px 16px color-mix(in srgb,var(--violet),transparent 65%)}
+    .auth-form{display:grid;gap:12px;animation:fadeIn .35s var(--ease)}
+    .field-group{display:grid;gap:6px;animation:slideUp .4s var(--ease) both}
+    .field-group:nth-child(2){animation-delay:.05s}.field-group:nth-child(3){animation-delay:.1s}.field-group:nth-child(4){animation-delay:.15s}
+    .input-wrap{position:relative}
+    .input-wrap .field{padding-left:40px}
+    .input-wrap svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted);pointer-events:none}
+    .strength{height:4px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:4px}
+    .strength-bar{height:100%;width:0;border-radius:inherit;transition:width .3s var(--ease),background .3s var(--ease);background:var(--danger)}
+    .strength-bar.s2{background:var(--warn)}.strength-bar.s3{background:var(--violet)}.strength-bar.s4{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+    .strength-label{font-size:11px;color:var(--muted);margin-top:4px;display:flex;justify-content:space-between}
+    .auth-meta{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted)}
+    .check{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+    .check input{appearance:none;width:16px;height:16px;border:1px solid var(--line-strong);border-radius:5px;background:rgba(255,255,255,.03);display:grid;place-items:center;cursor:pointer;transition:all .2s var(--ease)}
+    .check input:checked{background:var(--grad-primary);border-color:transparent}
+    .check input:checked::after{content:"✓";color:#fff;font-size:11px;font-weight:800}
+    .auth-link{color:var(--violet-2);text-decoration:none;font-weight:600;cursor:pointer}
+    .auth-link:hover{text-decoration:underline}
+    .auth-divider{display:flex;align-items:center;gap:10px;color:var(--muted-2);font-size:11.5px;margin:4px 0}
+    .auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:var(--line)}
+    .oauth-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .oauth-btn{padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s var(--ease)}
+    .oauth-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.06);border-color:var(--line-strong)}
+    .oauth-btn svg{width:16px;height:16px}
+    .auth-submit{padding:13px 16px;font-size:14px;font-weight:700;border-radius:12px}
+
+    /* ============ DASHBOARD (logged-out landing) ============ */
+    .dash-wrap{position:fixed;inset:0;z-index:280;overflow:auto;display:none;background:transparent}
+    .dash-wrap.show{display:block;animation:fadeIn .35s var(--ease)}
+    .dash-nav{
+      position:sticky;top:0;z-index:5;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 28px;border-bottom:1px solid var(--line);
+      background:rgba(11,10,24,.55);backdrop-filter:blur(18px) saturate(160%);
+      -webkit-backdrop-filter:blur(18px) saturate(160%);
+    }
+    html[data-theme=light] .dash-nav{background:rgba(255,255,255,.7)}
+    .dash-nav .brand{font-size:16px}
+    .dash-nav-links{display:flex;gap:6px;align-items:center}
+    .dash-nav-links a{padding:8px 14px;font-size:13px;color:var(--muted);text-decoration:none;border-radius:8px;font-weight:500;cursor:pointer;transition:all .2s var(--ease)}
+    .dash-nav-links a:hover{color:var(--txt);background:rgba(255,255,255,.04)}
+
+    .dash-hero{
+      position:relative;padding:90px 28px 80px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;
+      max-width:1100px;margin:0 auto;
+    }
+    .dash-hero::before{
+      content:"";position:absolute;left:50%;top:30px;transform:translateX(-50%);
+      width:560px;height:560px;border-radius:50%;
+      background:var(--grad-aurora);opacity:.18;filter:blur(80px);z-index:-1;
+      animation:spin 22s linear infinite;
+    }
+    .dash-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;color:var(--gold-2);font-weight:700;padding:6px 14px;border-radius:999px;background:color-mix(in srgb,var(--gold),transparent 88%);border:1px solid color-mix(in srgb,var(--gold),transparent 70%);animation:slideUp .6s var(--ease) both}
+    .dash-eyebrow::before{content:"✦";color:var(--gold);animation:pulse 2s infinite var(--ease)}
+    .dash-h1{
+      font-size:clamp(40px,6.5vw,76px);line-height:1;font-weight:800;margin:0;letter-spacing:-2px;max-width:900px;
+      background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+      animation:slideUp .7s var(--ease) .1s both;
+    }
+    .dash-h1 em{font-family:var(--serif);font-style:italic;font-weight:500;background:var(--grad-text-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .dash-lead{font-size:17px;line-height:1.65;color:var(--txt-2);max-width:620px;margin:0;animation:slideUp .7s var(--ease) .2s both}
+    .dash-cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:slideUp .7s var(--ease) .3s both}
+    .dash-cta .btn{padding:13px 22px;font-size:14px;font-weight:700;border-radius:12px}
+    .dash-trust{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:12.5px;margin-top:6px;animation:slideUp .7s var(--ease) .4s both}
+    .dash-trust span{display:inline-flex;align-items:center;gap:6px}
+    .dash-trust span::before{content:"✓";color:var(--ok);font-weight:800}
+
+    /* Mock chat preview */
+    .dash-preview{
+      max-width:1080px;margin:10px auto 60px;padding:0 28px;animation:slideUp .8s var(--ease) .5s both;
+    }
+    .preview-frame{
+      border:1px solid var(--line);border-radius:22px;overflow:hidden;
+      background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+      box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px color-mix(in srgb,var(--violet),transparent 80%);
+      position:relative;
+    }
+    .preview-frame::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--violet),transparent 40%),color-mix(in srgb,var(--cyan),transparent 50%),transparent)}
+    .preview-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+    .preview-bar .dot{width:10px;height:10px;border-radius:999px;background:#444}
+    .preview-bar .dot.r{background:#ff6b81}.preview-bar .dot.y{background:#f4bf5f}.preview-bar .dot.g{background:#3ad9a0}
+    .preview-bar .url{flex:1;text-align:center;font-size:11.5px;color:var(--muted);font-family:var(--mono)}
+    .preview-body{display:grid;grid-template-columns:240px 1fr;min-height:380px}
+    .preview-side{padding:14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:8px;background:rgba(0,0,0,.15)}
+    .preview-side .pi{padding:10px 12px;border-radius:9px;font-size:12.5px;color:var(--muted);background:rgba(255,255,255,.025);border:1px solid var(--line)}
+    .preview-side .pi.act{background:linear-gradient(90deg,color-mix(in srgb,var(--violet),transparent 84%),transparent);border-left:2px solid var(--violet);color:var(--txt)}
+    .preview-chat{padding:18px;display:flex;flex-direction:column;gap:12px;font-size:13px;line-height:1.6}
+    .pmsg{max-width:80%;padding:10px 14px;border-radius:13px;border:1px solid var(--line)}
+    .pmsg.u{align-self:flex-end;background:linear-gradient(135deg,color-mix(in srgb,var(--violet),transparent 78%),color-mix(in srgb,var(--cyan),transparent 86%));border-color:color-mix(in srgb,var(--violet),transparent 55%)}
+    .pmsg.a{background:rgba(255,255,255,.025)}
+    .pmsg .code{margin-top:6px;padding:8px 10px;background:rgba(0,0,0,.35);border-radius:8px;font-family:var(--mono);font-size:11.5px;color:var(--cyan);border:1px solid var(--line)}
+
+    /* Sections */
+    .dash-section{max-width:1100px;margin:0 auto;padding:60px 28px;position:relative}
+    .sec-head{text-align:center;margin-bottom:40px;display:flex;flex-direction:column;align-items:center;gap:10px}
+    .sec-head h2{font-size:clamp(28px,3.5vw,40px);margin:0;font-weight:800;letter-spacing:-.8px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .sec-head p{margin:0;color:var(--muted);max-width:560px;font-size:14.5px;line-height:1.6}
+
+    .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+    .fcard{
+      padding:22px;border:1px solid var(--line);border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));
+      display:flex;flex-direction:column;gap:10px;
+      transition:transform .3s var(--ease),border-color .3s var(--ease),box-shadow .3s var(--ease);
+      position:relative;overflow:hidden;
+    }
+    .fcard:hover{transform:translateY(-4px);border-color:var(--line-strong);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+    .fcard::after{content:"";position:absolute;inset:-50% -50% auto auto;width:200px;height:200px;background:var(--grad-aurora);opacity:0;filter:blur(40px);transition:opacity .4s var(--ease);pointer-events:none}
+    .fcard:hover::after{opacity:.18}
+    .fcard .ic{width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,var(--violet),transparent 82%);color:var(--violet-2);display:grid;place-items:center}
+    .fcard .ic svg{width:22px;height:22px}
+    .fcard h3{margin:0;font-size:16px;font-weight:700}
+    .fcard p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.6}
+
+    /* Models showcase */
+    .model-show{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:18px}
+    .ms{padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025);text-align:center;transition:all .25s var(--ease)}
+    .ms:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--violet),transparent 50%);background:rgba(255,255,255,.04)}
+    .ms .nm{font-weight:700;font-size:13.5px;margin-bottom:3px}
+    .ms .pr{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:8px}
+    .ms .free{display:inline-block;padding:2px 8px;font-size:10px;font-weight:700;border-radius:999px;background:color-mix(in srgb,var(--ok),transparent 80%);color:var(--ok);border:1px solid color-mix(in srgb,var(--ok),transparent 60%)}
+
+    /* Pricing */
+    .pricing{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:760px;margin:0 auto}
+    .pcard{padding:26px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));display:flex;flex-direction:column;gap:14px;transition:all .3s var(--ease)}
+    .pcard.featured{border-color:color-mix(in srgb,var(--gold),transparent 50%);background:linear-gradient(180deg,color-mix(in srgb,var(--gold),transparent 92%),rgba(255,255,255,.01));box-shadow:var(--shadow-gold);position:relative}
+    .pcard:hover{transform:translateY(-3px)}
+    .pcard h4{margin:0;font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+    .pprice{font-size:42px;font-weight:800;letter-spacing:-1px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .pcard.featured .pprice{background:var(--grad-text-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .pprice .per{font-size:14px;color:var(--muted);font-weight:500;-webkit-text-fill-color:var(--muted)}
+    .pcard ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+    .pcard li{font-size:13.5px;color:var(--txt-2);display:flex;align-items:flex-start;gap:8px}
+    .pcard li::before{content:"✓";color:var(--ok);font-weight:800;flex:0 0 auto}
+
+    .dash-foot{padding:30px 28px;border-top:1px solid var(--line);text-align:center;color:var(--muted-2);font-size:12.5px}
+
+    /* ============ RESPONSIVE ============ */
+    @media(max-width:980px){
+      .main{grid-template-columns:1fr}
+      .side{display:none}
+      .auth-grid{grid-template-columns:1fr}
+      .auth-hero{display:none}
+      .preview-body{grid-template-columns:1fr}
+      .preview-side{display:none}
+      .pricing{grid-template-columns:1fr}
+    }
+    @media(max-width:700px){
+      .tabs{display:none}
+      .grid2{grid-template-columns:1fr}
+      .top{padding:0 12px}
+      .brand-title{display:none}
+      .auth-form-wrap{padding:24px 18px}
+      .hero-title{font-size:38px}
+      .dash-nav{padding:12px 16px}
+      .dash-nav-links{display:none}
+      .dash-hero{padding:60px 18px 40px}
+      .dash-section{padding:40px 18px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+    }
+  </style>
+<script>
+  /* Single-file build — no server dependency. All data lives in localStorage. */
+  window.__SL_CONFIG__ = {
+    LOVABLE_AI_ENDPOINT: "https://ai.gateway.lovable.dev/v1/chat/completions"
+  };
+</script>
+</head>
+<body>
+
+
+
+<!-- ============ DASHBOARD (LOGGED OUT LANDING) ============ -->
+<div class="dash-wrap" id="dashWrap">
+  <nav class="dash-nav">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l4 4-4 4"/><path d="M12 19h8"/></svg></div>
+      <span class="brand-title">ScriptLab AI</span>
+      <span class="ver">v.1.4.7</span>
+    </div>
+    <div class="dash-nav-links">
+      <a data-scroll="features">Features</a>
+      <a data-scroll="models">Models</a>
+      <a data-scroll="pricing">Pricing</a>
+      <a class="btn" id="dashLoginBtn">Log in</a>
+      <a class="btn primary" id="dashSignupBtn">Get started →</a>
+    </div>
+  </nav>
+
+  <section class="dash-hero">
+    <span class="dash-eyebrow">Premium AI · Free usage · v.1.4.7</span>
+    <h1 class="dash-h1">The premium AI workspace, <em>free forever.</em></h1>
+    <p class="dash-lead">ScriptLab AI brings together the best frontier models together, Qwen, Claude, GPT, all in one workspace, free forever.</p>
+    <div class="dash-cta">
+      <button class="btn primary" id="dashCtaSignup">Start building free →</button>
+      <button class="btn" id="dashCtaDemo">See it in action</button>
+    </div>
+    <div class="dash-trust">
+      <span>No credit card</span>
+      <span>No API keys</span>
+      <span>Local-first & private</span>
+      <span>10+ Premium models</span>
+    </div>
+  </section>
+
+  <div class="dash-preview">
+    <div class="preview-frame">
+      <div class="preview-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="url">scriptlab.ai/workspace</span>
+      </div>
+      <div class="preview-body">
+        <aside class="preview-side">
+          <div class="pi">📁 Default Project</div>
+          <div class="pi act">💬 React grid bug</div>
+          <div class="pi">💬 Refactor auth</div>
+          <div class="pi">💬 SQL optimizer</div>
+        </aside>
+        <div class="preview-chat">
+          <div class="pmsg u">Why is my CSS grid overflowing on mobile?</div>
+          <div class="pmsg a">Your grid is overflowing because the columns use fixed <code style="background:rgba(0,0,0,.35);padding:1px 5px;border-radius:5px;font-family:var(--mono);font-size:11.5px">px</code> values. Switch to a responsive track:
+            <div class="code">grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));</div>
+          </div>
+          <div class="pmsg u">Perfect — can you make the gap responsive too?</div>
+          <div class="pmsg a"><span class="typing"><span></span><span></span><span></span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="dash-section" id="sec-features">
+    <div class="sec-head">
+      <span class="dash-eyebrow">Premium toolkit</span>
+      <h2>Everything a serious dev needs.</h2>
+      <p>Project memory, file ingestion, slash commands, prompt enhancers, multi-model routing, command palette — all polished, all included.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="fcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div><h3>Multi-model routing</h3><p>Switch between Gemini 2.0 Flash, Llama 3.3 70B, DeepSeek R1, Qwen Coder and more — instantly, per-chat.</p></div>
+      <div class="fcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h3>Project memory</h3><p>Persistent context per chat & project, so the AI remembers your stack and conventions across sessions.</p></div>
+      <div class="fcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><h3>File ingestion</h3><p>Drop in <code>.js .ts .tsx .py .css .json</code> — ScriptLab inlines them as context for surgical edits.</p></div>
+      <div class="fcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div><h3>Command palette</h3><p>Hit <span class="kbd">⌘K</span> and run anything — new chat, switch theme, run diagnostics, export.</p></div>
+      <div class="fcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div><h3>Prompt enhancer</h3><p>One-click toggle that auto-rewrites your prompt with execution steps, risks and a testing checklist.</p></div>
+      <div class="fcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><h3>Local-first & private</h3><p>Chats, projects, files and keys live in your browser. Nothing is uploaded, nothing is tracked.</p></div>
+    </div>
+  </section>
+
+  <section class="dash-section" id="sec-models">
+    <div class="sec-head">
+      <span class="dash-eyebrow">All free · all the time</span>
+      <h2>Frontier models. <em style="font-family:var(--serif);font-style:italic;font-weight:500;background:var(--grad-text-gold);-webkit-background-clip:text;background-clip:text;color:transparent">Zero cost.</em></h2>
+      <p>Pick the right brain for the job. We only ship free-tier models — no paid SKUs in the picker, ever.</p>
+    </div>
+    <div class="model-show" id="modelShow"></div>
+  </section>
+
+  <section class="dash-section" id="sec-pricing">
+    <div class="sec-head">
+      <span class="dash-eyebrow">Simple pricing</span>
+      <h2>Free, and somehow <em style="font-family:var(--serif);font-style:italic;font-weight:500;background:var(--grad-text-gold);-webkit-background-clip:text;background-clip:text;color:transparent">also free.</em></h2>
+      <p>The Premium experience without the premium price tag.</p>
+    </div>
+    <div class="pricing">
+      <div class="pcard">
+        <h4>✦ Free</h4>
+        <div class="pprice">$0<span class="per"> / forever</span></div>
+        <ul>
+          <li>10+ free frontier models</li>
+          <li>Unlimited projects & chats</li>
+          <li>File ingestion & memory</li>
+          <li>Command palette & shortcuts</li>
+          <li>Local-first, private</li>
+        </ul>
+        <button class="btn primary" id="priceFreeBtn">Get started</button>
+      </div>
+      <div class="pcard featured">
+        <h4>★ Premium <span class="pro-badge lit">Coming soon</span></h4>
+        <div class="pprice">$0<span class="per"> / preview</span></div>
+        <ul>
+          <li>Everything in Free</li>
+          <li>Bring your own API keys</li>
+          <li>Cloud sync across devices</li>
+          <li>Team workspaces</li>
+          <li>Priority free-tier routing</li>
+        </ul>
+        <button class="btn gold" id="priceProBtn">Join the waitlist</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="dash-foot">
+    © 2026 ScriptLab AI · Crafted with <span style="color:var(--rose)">♥</span> · v.1.4.7
+  </footer>
+</div>
+
+<!-- ============ AUTH ============ -->
+<div class="auth-wrap hide" id="authWrap">
+  <div class="auth-grid">
+    <div class="auth-hero">
+      <div class="auth-brand">
+        <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l4 4-4 4"/><path d="M12 19h8"/></svg></div>
+        ScriptLab AI
+      </div>
+      <div class="auth-hero-inner">
+        <span class="hero-eyebrow">✦ Premium AI models</span>
+        <h1 class="hero-title">Build, debug & ship code <em>at the speed of thought.</em></h1>
+        <p class="hero-sub">A premium AI workspace for developers — multi-model chat, project memory, file context and instant prototyping. 100% free models, zero setup.</p>
+        <div class="feat-list">
+          <div class="feat"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div><div><strong>Free flagship models</strong><span>Gemini 2.0 Flash, Llama 3.3 70B, DeepSeek R1, Qwen Coder — all free.</span></div></div>
+          <div class="feat"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div><strong>Project memory</strong><span>Persistent context, file imports, and pinned chats per project.</span></div></div>
+          <div class="feat"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div><div><strong>Premium toolkit</strong><span>Slash commands, prompt enhancer, diagnostics, exports & ⌘K palette.</span></div></div>
+          <div class="feat"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div><strong>Local-first & private</strong><span>Your chats, projects and keys never leave your browser.</span></div></div>
+        </div>
+      </div>
+      <div class="auth-foot"><span>© ScriptLab AI · v.1.4.7</span><span class="stars">★★★★★ <span style="color:var(--muted-2)">trusted by indie devs</span></span></div>
+    </div>
+
+    <div class="auth-form-wrap">
+      <div class="auth-card">
+        <div>
+          <h2 id="authTitle">Create your account</h2>
+          <p class="lead" id="authLead">Get started in seconds — no credit card, no API key required.</p>
+        </div>
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab active" data-auth-tab="signup">Sign up</button>
+          <button class="auth-tab" data-auth-tab="login">Log in</button>
+        </div>
+        <form class="auth-form" id="authForm" autocomplete="on" novalidate>
+          <div class="field-group" data-signup-only>
+            <label class="label" for="authName">Full name</label>
+            <div class="input-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input type="text" id="authName" class="field" placeholder="Ada Lovelace" autocomplete="name" /></div>
+          </div>
+          <div class="field-group">
+            <label class="label" for="authEmail">Email</label>
+            <div class="input-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><input type="email" id="authEmail" class="field" placeholder="you@scriptlab.ai" autocomplete="email" required /></div>
+          </div>
+          <div class="field-group">
+            <label class="label" for="authPass">Password</label>
+            <div class="input-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" id="authPass" class="field" placeholder="••••••••" autocomplete="current-password" required /></div>
+            <div data-signup-only>
+              <div class="strength"><div class="strength-bar" id="strengthBar"></div></div>
+              <div class="strength-label"><span id="strengthLabel">Weak</span><span>min 8 characters</span></div>
+            </div>
+          </div>
+          <div class="auth-meta">
+            <label class="check" data-signup-only><input type="checkbox" id="authTerms" /><span>I agree to the Terms</span></label>
+            <label class="check" data-login-only style="display:none"><input type="checkbox" id="authRemember" checked /><span>Remember me</span></label>
+            <a class="auth-link" id="forgotLink" data-login-only style="display:none">Forgot?</a>
+          </div>
+          <button type="submit" class="btn primary auth-submit" id="authSubmit">Create account</button>
+          <div class="auth-divider">or continue with</div>
+          <div class="oauth-row">
+            <button type="button" class="oauth-btn" data-oauth="google"><svg viewBox="0 0 24 24"><path fill="#EA4335" d="M12 11v3.2h5.3c-.2 1.4-1.7 4.2-5.3 4.2-3.2 0-5.8-2.6-5.8-5.9S8.8 6.6 12 6.6c1.8 0 3 .8 3.7 1.4l2.5-2.4C16.6 4.1 14.5 3 12 3 6.9 3 2.8 7.1 2.8 12.2S6.9 21.4 12 21.4c6 0 9.9-4.2 9.9-10 0-.7-.1-1.2-.2-1.8H12z"/></svg>Google</button>
+            <button type="button" class="oauth-btn" data-oauth="github"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>GitHub</button>
+          </div>
+          <div style="text-align:center;font-size:13px;color:var(--muted);margin-top:4px">
+            <span id="authSwitchText">Already have an account?</span>
+            <a class="auth-link" id="authSwitchLink">Log in</a>
+          </div>
+          <div style="text-align:center;font-size:12px;color:var(--muted-2)">
+            <a class="auth-link" id="backToDash" style="color:var(--muted-2);font-weight:500">← Back to home</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="app" id="appShell" style="display:none">
+  <header class="top">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l4 4-4 4"/><path d="M12 19h8"/></svg></div>
+      <span class="brand-title">ScriptLab AI</span>
+      <span class="ver">v.1.4.7</span>
+    </div>
+    <div class="tabs">
+      <button class="tab active">Chat</button>
+      <button class="tab">Projects</button>
+      <button class="tab">Workspace</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="pro-badge" id="userPro">Free</span>
+      <span class="kbd">⌘K</span>
+      <button class="icon" id="openCmdBtn" title="Command palette">⌘</button>
+      <button class="icon" id="openSettingsBtn" title="Settings">⚙</button>
+      <button class="icon" id="userBtn" title="Account">👤</button>
+    </div>
+  </header>
+
+  <section class="main">
+    <aside class="panel side">
+      <div style="display:flex;gap:8px">
+        <button class="btn primary" id="newProjectBtn" style="flex:1">+ Project</button>
+        <button class="btn" id="newChatBtn" style="flex:1">+ Chat</button>
+      </div>
+      <input class="search" id="chatSearch" placeholder="🔍  Search chats..." />
+      <div class="stack" id="projectsList"></div>
+      <div class="stack" id="chatsList"></div>
+    </aside>
+
+    <main class="panel chat">
+      <div class="head">
+        <div>
+          <div id="chatTitle" style="font-weight:700;font-size:15px">New Chat</div>
+          <div id="chatSub" style="font-size:12px;color:var(--muted);margin-top:2px">Ready</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip" id="chipProvider"><span class="dot"></span>Provider</span>
+          <span class="chip" id="chipModel">Model</span>
+          <span class="chip gold" id="chipKey"><span class="dot"></span>Lovable AI</span>
+        </div>
+      </div>
+      <div class="messages" id="messages"></div>
+      <div class="bar">
+        <button class="btn" id="btnContext">📝 Context</button>
+        <button class="btn" id="btnFiles">📎 Files</button>
+        <button class="btn" id="btnTools">🛠 Tools</button>
+        <button class="btn" id="btnDiag">🩺 Diagnostics</button>
+        <button class="btn" id="btnExport">⤓ Export</button>
+        <button class="btn" id="btnModels">✨ Pick model</button>
+      </div>
+      <div class="composer">
+        <div class="slash-row">
+          <button class="btn" data-slash="/fix">/fix</button>
+          <button class="btn" data-slash="/explain">/explain</button>
+          <button class="btn" data-slash="/optimize">/optimize</button>
+          <button class="btn" data-slash="/refactor">/refactor</button>
+          <button class="btn" data-slash="/convert">/convert</button>
+          <button class="btn" id="enhancerBtn">✨ Enhancer: Off</button>
+        </div>
+        <textarea id="promptInput" placeholder="Message ScriptLab... (Enter to send, Shift+Enter for newline)"></textarea>
+        <div class="composer-actions">
+          <div style="display:flex;gap:8px">
+            <button class="btn" id="stopBtn">■ Stop</button>
+            <button class="btn" id="regenBtn">↻ Regenerate</button>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn ghost" id="clearBtn">Clear</button>
+            <button class="btn primary" id="sendBtn">Send →</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+</div>
+
+<!-- Drawers / Overlays -->
+<div class="drawer" id="drawer">
+  <div class="drawer-card">
+    <div class="dhead"><strong id="drawerTitle">Context</strong><button class="btn" id="closeDrawerBtn">Close</button></div>
+    <div class="dbody" id="drawerBody"></div>
+    <div id="drawerFoot" style="padding:12px;border-top:1px solid var(--line)"></div>
+  </div>
+</div>
+
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><h3>Settings</h3><div class="sub">All free models. No keys required.</div></div>
+      <button class="btn" id="closeSettingsBtn">Close</button>
+    </div>
+    <div class="grid2">
+      <div><span class="label">Theme</span><select id="themeSelect" class="field"><option value="dark">Obsidian (Dark)</option><option value="light">Pearl (Light)</option></select></div>
+      <div><span class="label">Accent</span><input id="accentInput" class="field" type="color" /></div>
+    </div>
+    <div>
+      <span class="label">API keys <span class="pro-badge" style="margin-left:6px">Stored locally · never uploaded</span></span>
+      <div class="grid2" style="margin-top:6px">
+        <div><span class="label" style="font-size:11px">Lovable AI Gateway</span><input id="keyLovable" class="field" type="password" placeholder="sk-lov-…" autocomplete="off" /></div>
+        <div><span class="label" style="font-size:11px">OpenRouter</span><input id="keyOpenrouter" class="field" type="password" placeholder="sk-or-v1-…" autocomplete="off" /></div>
+        <div><span class="label" style="font-size:11px">OpenAI</span><input id="keyOpenai" class="field" type="password" placeholder="sk-…" autocomplete="off" /></div>
+        <div><span class="label" style="font-size:11px">Anthropic</span><input id="keyAnthropic" class="field" type="password" placeholder="sk-ant-…" autocomplete="off" /></div>
+      </div>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:6px">Keys live only in your browser localStorage and are sent directly to each provider over HTTPS. Get a Lovable AI key at <a href="https://lovable.dev" target="_blank" style="color:var(--violet-2)">lovable.dev</a>.</div>
+    </div>
+    <div>
+      <span class="label">Active Model <span class="pro-badge" style="margin-left:6px">Free</span></span>
+      <div class="model-grid" id="modelTiles"></div>
+    </div>
+    <button class="btn primary" id="saveSettingsBtn">Save Settings</button>
+  </div>
+</div>
+
+<div class="overlay" id="modelOverlay">
+  <div class="modal" style="max-width:760px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><h3>Pick a model</h3><div class="sub">All free, all the time. Switch any time per chat.</div></div>
+      <button class="btn" id="closeModelOv">Close</button>
+    </div>
+    <div class="model-grid" id="modelTilesQuick"></div>
+  </div>
+</div>
+
+<div class="overlay" id="cmdOverlay">
+  <div class="modal" style="max-width:560px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3>Command Palette</h3><button class="btn" id="closeCmdBtn">Close</button>
+    </div>
+    <input class="search" id="cmdSearch" placeholder="Type a command..." />
+    <div class="stack" id="cmdList" style="max-height:420px"></div>
+  </div>
+</div>
+
+<input id="fileInput" type="file" multiple style="display:none" />
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* ============ STATE ============ */
+const STORE={S:"sl_s_v131",P:"sl_p_v131",C:"sl_c_v131",F:"sl_f_v131",M:"sl_m_v131",U:"sl_u_v131"};
+
+/* All FREE models — curated list with rich metadata for the premium picker. */
+const MODELS=[
+  // ============ Lovable AI (managed, no key required) ============
+  {id:"lovable:google/gemini-3-flash-preview",name:"Gemini 3 Flash (Preview)",prov:"Lovable AI",tags:["fast","flagship"],desc:"Default — next-gen Google model. Fast & high quality.",pkey:"lovable"},
+  {id:"lovable:google/gemini-3.1-pro-preview",name:"Gemini 3.1 Pro (Preview)",prov:"Lovable AI",tags:["reason","flagship"],desc:"Latest preview of Google's reasoning model.",pkey:"lovable"},
+  {id:"lovable:google/gemini-2.5-pro",name:"Gemini 2.5 Pro",prov:"Lovable AI",tags:["reason","multimodal","flagship"],desc:"Top-tier Gemini — heavy reasoning, large context.",pkey:"lovable"},
+  {id:"lovable:google/gemini-2.5-flash",name:"Gemini 2.5 Flash",prov:"Lovable AI",tags:["fast","balanced"],desc:"Balanced Gemini — fast and capable.",pkey:"lovable"},
+  {id:"lovable:google/gemini-2.5-flash-lite",name:"Gemini 2.5 Flash Lite",prov:"Lovable AI",tags:["fast"],desc:"Cheapest & fastest Gemini for high volume.",pkey:"lovable"},
+  {id:"lovable:openai/gpt-5",name:"GPT-5",prov:"Lovable AI",tags:["reason","flagship","multimodal"],desc:"OpenAI's powerful all-rounder. Excellent reasoning.",pkey:"lovable"},
+  {id:"lovable:openai/gpt-5.2",name:"GPT-5.2",prov:"Lovable AI",tags:["reason","flagship"],desc:"OpenAI's latest with enhanced reasoning.",pkey:"lovable"},
+  {id:"lovable:openai/gpt-5-mini",name:"GPT-5 Mini",prov:"Lovable AI",tags:["balanced"],desc:"Lower cost & latency, keeps most reasoning power.",pkey:"lovable"},
+  {id:"lovable:openai/gpt-5-nano",name:"GPT-5 Nano",prov:"Lovable AI",tags:["fast"],desc:"Speed & cost saver for high-volume tasks.",pkey:"lovable"},
+  // ============ OpenRouter (free tier — needs OpenRouter key for higher limits) ============
+  {id:"inclusionai/ling-2.6-flash:free",name:"inclusionAI: Ling-2.6-flash",prov:"OpenRouter",tags:["fast","multimodal"],desc:"This model is highly efficient at coding, with efficiency built in.",pkey:"openrouter"},
+  {id:"openrouter/free",name:"Auto",prov:"OpenRouter",tags:["fast","multimodal"],desc:"Best Auto model, choosing from hundreds of AI models for whatever your doing to get best results.",pkey:"openrouter"},
+  {id:"google/gemma-3-27b-it:free",name:"Gemma 3 27B",prov:"OpenRouter",tags:["balanced"],desc:"Open Gemma, strong general use.",pkey:"openrouter"},
+  {id:"nvidia/nemotron-3-super-120b-a12b:free",name:"NVIDIA: Nemotron 3 Super",prov:"OpenRouter",tags:["reason","flagship"],desc:"NVIDIA's Best Coding Model",pkey:"openrouter"},
+  {id:"openai/gpt-oss-120b:free",name:"OpenAI: gpt-oss-120b",prov:"OpenRouter",tags:["multimodal"],desc:"Best Balanced Model.",pkey:"openrouter"},
+  {id:"nousresearch/hermes-3-llama-3.1-405b:free",name:"Nous: Hermes 3 405B Instruct",prov:"OpenRouter",tags:["fast"],desc:"Compared to Hermes 2, 3 has better agentic capabilitys in real world enviroments.",pkey:"openrouter"},
+  {id:"google/gemma-3-27b-it:free",name:"Google: Gemma 3 27B",prov:"OpenRouter",tags:["reason","flagship"],desc:"Googles official Gemma 3 model, capable of coding, and everyday tasks.",pkey:"openrouter"},
+  {id:"qwen/qwen3-next-80b-a3b-instruct:free",name:"QwenQwen: Qwen3 Next 80B A3B Instruct",prov:"OpenRouter",tags:["reason"],desc:"Smaller version of Qwen3 but it is more efficient.",pkey:"openrouter"},
+  {id:"minimax/minimax-m2.5:free",name:"MiniMax: MiniMax M2.5",prov:"OpenRouter",tags:["reason","code"],desc:"Best-in-class free coding model.",pkey:"openrouter"},
+  {id:"qwen/qwen3-coder:free",name:"Qwen: Qwen3 Coder 480B A35B",prov:"OpenRouter",tags:["reason"],desc:"Newest and best Qwen model down the line.",pkey:"openrouter"},
+  {id:"z-ai/glm-4.5-air:free",name:"Z.ai: GLM 4.5 Air",prov:"OpenRouter",tags:["balanced"],desc:"GLM-4.5-Air is a lightweight MoE model for agent tasks with two modes: thinking (reasoning) and non-thinking (fast). Use reasoning_enabled to switch modes.",pkey:"openrouter"},
+  // ============ OpenAI direct (needs OpenAI key) ============
+  {id:"openai:gpt-4o",name:"GPT-4o",prov:"OpenAI",tags:["reason","multimodal","flagship"],desc:"OpenAI flagship — needs OpenAI API key.",pkey:"openai"},
+  {id:"openai:gpt-4o-mini",name:"GPT-4o Mini",prov:"OpenAI",tags:["fast","balanced"],desc:"Fast OpenAI mini — needs OpenAI API key.",pkey:"openai"},
+  // ============ Anthropic direct (needs Anthropic key) ============
+  {id:"anthropic:claude-3-5-sonnet-latest",name:"Claude 3.5 Sonnet",prov:"Anthropic",tags:["reason","flagship"],desc:"Anthropic flagship — needs Anthropic API key.",pkey:"anthropic"},
+  {id:"anthropic:claude-3-5-haiku-latest",name:"Claude 3.5 Haiku",prov:"Anthropic",tags:["fast"],desc:"Fast Claude — needs Anthropic API key.",pkey:"anthropic"}
+];
+const PROVIDERS_INDEX=(()=>{const o={};MODELS.forEach(m=>{(o[m.prov]=o[m.prov]||[]).push(m)});return o})();
+
+async function callAI({model,system,messages,signal}){
+  const m = MODELS.find(x=>x.id===model)||MODELS[0];
+  const keys = (st.settings.keys||{});
+
+  // ===== Lovable AI Gateway (direct) =====
+  if(m.pkey==="lovable"){
+    if(!keys.lovable) throw new Error("Lovable AI key required — add it in Settings → API keys.");
+    const realModel = m.id.replace(/^lovable:/, "");
+    const r = await fetch(window.__SL_CONFIG__.LOVABLE_AI_ENDPOINT, {
+      method:"POST", signal,
+      headers:{"content-type":"application/json","authorization":"Bearer "+keys.lovable},
+      body: JSON.stringify({ model: realModel, messages:[{role:"system",content:system},...messages.map(x=>({role:x.role,content:x.content}))], temperature:.7 })
+    });
+    if(!r.ok){
+      const t = await r.text();
+      if(r.status===429) throw new Error("Lovable AI rate limited — wait a moment and retry.");
+      if(r.status===402) throw new Error("Lovable AI credits exhausted — top up at lovable.dev.");
+      if(r.status===401||r.status===403) throw new Error("Invalid Lovable AI key — check Settings.");
+      throw new Error("Lovable AI "+r.status+": "+t.slice(0,160));
+    }
+    const d = await r.json();
+    return d.choices?.[0]?.message?.content || "";
+  }
+
+  // ===== OpenAI direct =====
+  if(m.pkey==="openai"){
+    if(!keys.openai) throw new Error("OpenAI key required — add it in Settings → API keys.");
+    const realModel = m.id.replace(/^openai:/, "");
+    const r = await fetch("https://api.openai.com/v1/chat/completions",{
+      method:"POST", signal,
+      headers:{"content-type":"application/json", "authorization":"Bearer "+keys.openai},
+      body: JSON.stringify({ model: realModel, messages:[{role:"system",content:system},...messages.map(x=>({role:x.role,content:x.content}))], temperature:.7 })
+    });
+    if(!r.ok){ const t=await r.text(); throw new Error("OpenAI "+r.status+": "+t.slice(0,160)); }
+    const d = await r.json();
+    return d.choices?.[0]?.message?.content || "";
+  }
+
+  // ===== Anthropic direct =====
+  if(m.pkey==="anthropic"){
+    if(!keys.anthropic) throw new Error("Anthropic key required — add it in Settings → API keys.");
+    const realModel = m.id.replace(/^anthropic:/, "");
+    const r = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST", signal,
+      headers:{"content-type":"application/json", "x-api-key": keys.anthropic, "anthropic-version":"2023-06-01", "anthropic-dangerous-direct-browser-access":"true"},
+      body: JSON.stringify({ model: realModel, max_tokens: 4096, system, messages: messages.map(x=>({role:x.role==="assistant"?"assistant":"user", content:x.content})) })
+    });
+    if(!r.ok){ const t=await r.text(); throw new Error("Anthropic "+r.status+": "+t.slice(0,160)); }
+    const d = await r.json();
+    return d.content?.[0]?.text || "";
+  }
+
+  // ===== OpenRouter (default for :free models) =====
+  const headers = {"content-type":"application/json","HTTP-Referer":location.origin,"X-Title":"ScriptLab AI"};
+  if(keys.openrouter) headers["authorization"] = "Bearer "+keys.openrouter;
+  const r = await fetch("https://openrouter.ai/api/v1/chat/completions",{
+    method:"POST", signal, headers,
+    body: JSON.stringify({ model, messages:[{role:"system",content:system},...messages.map(x=>({role:x.role,content:x.content}))], temperature:.7 })
+  });
+  if(!r.ok){
+    if(r.status===429) throw new Error("OpenRouter rate limited — try Lovable AI or add OpenRouter key.");
+    if(r.status===402) throw new Error("OpenRouter quota reached — try a different model.");
+    if(r.status===401||r.status===403) throw new Error("Add OpenRouter API key in Settings to use this model.");
+    throw new Error("OpenRouter error "+r.status);
+  }
+  const d = await r.json();
+  return d.choices?.[0]?.message?.content || "";
+}
+// Backwards-compat alias
+const openRouter = callAI;
+
+const st={
+  settings:{theme:"dark",accent:"#9b7cff",model:"lovable:google/gemini-3-flash-preview",enh:false,keys:{lovable:"",openrouter:"",openai:"",anthropic:""}},
+  user:null,projects:[],chats:[],files:{},memory:{},
+  pid:"",cid:"",gen:false,abort:null,timer:null,search:""
+};
+
+const q=s=>document.querySelector(s),
+      qa=s=>document.querySelectorAll(s),
+      safe=(s,f)=>{try{return JSON.parse(s||"")}catch{return f}},
+      uid=()=>Math.random().toString(36).slice(2,11)+Date.now().toString(36),
+      cut=(s,n)=>s.length>n?s.slice(0,n)+"\n...[truncated]":s,
+      esc=s=>String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;"),
+      modelOf=id=>MODELS.find(m=>m.id===id)||MODELS[0];
+
+const COMMANDS=[
+  {id:"new-chat",label:"➕  New Chat",run:()=>newChat("New Chat")},
+  {id:"new-project",label:"📁  New Project",run:newProject},
+  {id:"open-settings",label:"⚙️  Open Settings",run:()=>openOv("settingsOverlay")},
+  {id:"pick-model",label:"✨  Pick Model",run:()=>{renderModelTiles("modelTilesQuick");openOv("modelOverlay")}},
+  {id:"theme-toggle",label:"🌓  Toggle Theme",run:()=>{st.settings.theme=st.settings.theme==="dark"?"light":"dark";applyTheme();persist();toast("success","Theme: "+st.settings.theme)}},
+  {id:"test-connection",label:"⚡  Test Connection",run:testConnection},
+  {id:"export-chat",label:"⤓  Export Chat",run:exportChat},
+  {id:"signout",label:"🚪  Sign out",run:signOut}
+];
+
+function toast(t,m){const e=document.createElement("div");e.className="toast "+(t||"info");e.textContent=m;q("#toasts").appendChild(e);setTimeout(()=>e.remove(),3300)}
+function persist(){
+  localStorage.setItem(STORE.S,JSON.stringify(st.settings));
+  localStorage.setItem(STORE.P,JSON.stringify(st.projects));
+  localStorage.setItem(STORE.C,JSON.stringify(st.chats));
+  localStorage.setItem(STORE.F,JSON.stringify(st.files));
+  localStorage.setItem(STORE.M,JSON.stringify(st.memory));
+  if(st.user)localStorage.setItem(STORE.U,JSON.stringify(st.user)); else localStorage.removeItem(STORE.U);
+}
+function hydrate(){
+  st.settings={...st.settings,...safe(localStorage.getItem(STORE.S),{})}; st.settings.keys = {lovable:"",openrouter:"",openai:"",anthropic:"", ...(st.settings.keys||{})};
+  st.projects=safe(localStorage.getItem(STORE.P),[]);
+  st.chats=safe(localStorage.getItem(STORE.C),[]);
+  st.files=safe(localStorage.getItem(STORE.F),{});
+  st.memory=safe(localStorage.getItem(STORE.M),{});
+  st.user=safe(localStorage.getItem(STORE.U),null);
+}
+function boot(){
+  if(!st.projects.length)st.projects.push({id:uid(),name:"Default Project",createdAt:Date.now()});
+  st.pid=st.projects[0].id;
+  if(!getChats().length)st.chats.unshift({id:uid(),projectId:st.pid,title:"New Chat",messages:[],createdAt:Date.now(),pinned:false});
+  st.cid=getChats()[0].id;
+  if(!MODELS.find(m=>m.id===st.settings.model))st.settings.model=MODELS[0].id;
+}
+function getChats(){return st.chats.filter(c=>c.projectId===st.pid).sort((a,b)=>(b.pinned-a.pinned)||(b.createdAt-a.createdAt))}
+function cur(){return st.chats.find(c=>c.id===st.cid)||null}
+function memKey(){return st.pid+"::"+st.cid}
+
+function applyTheme(){
+  document.documentElement.setAttribute("data-theme",st.settings.theme);
+  document.documentElement.style.setProperty("--accent",st.settings.accent);
+  document.documentElement.style.setProperty("--violet",st.settings.accent);
+  const ts=q("#themeSelect"),ai=q("#accentInput");
+  if(ts)ts.value=st.settings.theme;if(ai)ai.value=st.settings.accent;
+  const eb=q("#enhancerBtn");if(eb)eb.textContent="✨ Enhancer: "+(st.settings.enh?"On":"Off");
+}
+function chips(){
+  const m=modelOf(st.settings.model);
+  q("#chipProvider").innerHTML=`<span class="dot"></span>${esc(m.prov)}`;
+  q("#chipModel").textContent=m.name;
+  const k = q("#chipKey");
+  if(k){
+    if(m.pkey==="lovable"){ k.innerHTML='<span class="dot"></span>Lovable AI · Your key'; k.style.display=""; }
+    else if(m.pkey==="openai"){ k.innerHTML='<span class="dot"></span>OpenAI · Your key'; k.style.display=""; }
+    else if(m.pkey==="anthropic"){ k.innerHTML='<span class="dot"></span>Anthropic · Your key'; k.style.display=""; }
+    else { k.innerHTML='<span class="dot"></span>OpenRouter · Free'; k.style.display=""; }
+  }
+}
+
+function renderProjects(){
+  q("#projectsList").innerHTML=st.projects.map(p=>`<div class="item ${p.id===st.pid?"active":""}" data-p="${p.id}"><span>📁 ${esc(p.name)}</span><span style="font-size:11px;color:var(--muted)">${new Date(p.createdAt).toLocaleDateString()}</span></div>`).join("");
+  qa("[data-p]").forEach(e=>e.onclick=()=>{st.pid=e.getAttribute("data-p")||"";if(!getChats().length)newChat("New Chat");st.cid=getChats()[0].id;renderProjects();renderChats();renderMessages();persist()});
+}
+function renderChats(){
+  const c=getChats().filter(x=>!st.search||x.title.toLowerCase().includes(st.search.toLowerCase()));
+  q("#chatsList").innerHTML=c.length?c.map(x=>`<div class="item ${x.id===st.cid?"active":""} ${x.pinned?"pin":""}" data-c="${x.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(x.title)}</span><button class="btn ghost" data-pin="${x.id}" style="padding:3px 7px;font-size:11px">${x.pinned?"📌":"○"}</button></div>`).join(""):`<div class="item" style="color:var(--muted);justify-content:center">No chats yet</div>`;
+  qa("[data-c]").forEach(e=>e.onclick=ev=>{if(ev.target.closest("[data-pin]"))return;st.cid=e.getAttribute("data-c")||"";renderChats();renderMessages();persist()});
+  qa("[data-pin]").forEach(b=>b.onclick=ev=>{ev.stopPropagation();const id=b.getAttribute("data-pin")||"";const ch=st.chats.find(x=>x.id===id);if(!ch)return;ch.pinned=!ch.pinned;renderChats();persist()});
+}
+function md(t){let h=esc(t);h=h.replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^## (.*)$/gm,"<h2>$1</h2>").replace(/^# (.*)$/gm,"<h1>$1</h1>").replace(/^- (.*)$/gm,"• $1");return h}
+function fmt(t){
+  if(t==="__typing__")return `<span class="typing"><span></span><span></span><span></span></span>`;
+  let h=md(t);
+  h=h.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g,(_,l,c)=>`<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:6px">${l||"code"}</div><div style="margin-top:4px;border:1px solid var(--line);border-radius:10px;padding:10px;background:rgba(0,0,0,.32);overflow:auto;font-family:var(--mono);font-size:12.5px"><code>${esc(c)}</code></div><button class="btn" data-copy="${encodeURIComponent(c)}" style="margin-top:6px;padding:4px 10px;font-size:11.5px">📋 Copy</button>`);
+  return h.replace(/\n/g,"<br>");
+}
+function renderMessages(){
+  const c=cur();
+  q("#chatTitle").textContent=c?.title||"New Chat";
+  q("#chatSub").textContent=c?(c.messages.length+" messages · "+modelOf(st.settings.model).name):"Ready";
+  const m=q("#messages");
+  if(!c||!c.messages.length){
+    m.innerHTML=`<div class="empty">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <h4>How can I help${st.user?(", <em>"+esc(st.user.name.split(" ")[0])+"</em>"):""}?</h4>
+      <p>Start a chat with ScriptLab AI. Use slash commands, attach files, or pick a quick suggestion below.</p>
+      <div class="suggest">
+        <button class="btn" data-suggest="/explain Walk me through how a JavaScript Promise actually works under the hood.">⚡ Explain Promises</button>
+        <button class="btn" data-suggest="/refactor Refactor this React component for readability and performance:">✨ Refactor React</button>
+        <button class="btn" data-suggest="/fix Why is my CSS grid layout overflowing on mobile?">🐛 Fix CSS</button>
+      </div>
+    </div>`;
+    qa("[data-suggest]").forEach(b=>b.onclick=()=>{q("#promptInput").value=b.getAttribute("data-suggest")||"";q("#promptInput").focus()});
+    return;
+  }
+  m.innerHTML=c.messages.map((x,i)=>{
+    const prev=c.messages[i-1],compact=prev&&prev.role===x.role,isUser=x.role==="user";
+    return `<div class="msg ${isUser?"user":"assistant"}">
+      <div class="meta ${compact?"compact":""} ${isUser?"user-meta":""}">
+        <span style="display:inline-flex;align-items:center;gap:6px"><span class="avatar">${isUser?(st.user?.name?.[0]?.toUpperCase()||"Y"):"S"}</span><span>${isUser?"You":"ScriptLab"} · ${new Date(x.ts).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}</span></span>
+        <span>${isUser?`<button class="btn ghost" data-edit="${i}" style="padding:3px 8px;font-size:11px">✎ Edit</button>`:""}</span>
+      </div>
+      <div class="bubble">${fmt(x.content)}</div>
+    </div>`;
+  }).join("");
+  qa("[data-edit]").forEach(b=>b.onclick=()=>{const i=Number(b.getAttribute("data-edit"));const c=cur();if(!c)return;const msg=c.messages[i];if(!msg||msg.role!=="user")return;q("#promptInput").value=msg.content;c.messages=c.messages.slice(0,i);renderMessages();persist()});
+  qa("[data-copy]").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(decodeURIComponent(b.getAttribute("data-copy")||"")).then(()=>toast("success","Copied to clipboard")));
+  m.scrollTop=m.scrollHeight;
+}
+
+function renderModelTiles(targetId){
+  const wrap=q("#"+targetId);if(!wrap)return;
+  wrap.innerHTML=MODELS.map(m=>{
+    const tags=["<span class='mtag free'>FREE</span>"].concat(m.tags.map(t=>`<span class="mtag ${t==='fast'?'fast':(t==='reason'||t==='code')?'reason':''}">${t.toUpperCase()}</span>`)).join("");
+    return `<div class="model-tile ${m.id===st.settings.model?'active':''}" data-mid="${m.id}">
+      <div class="mprov">${esc(m.prov)}</div>
+      <div class="mname">${esc(m.name)}${m.id===st.settings.model?' <span style="color:var(--violet)">●</span>':''}</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.45">${esc(m.desc)}</div>
+      <div class="mtags">${tags}</div>
+    </div>`;
+  }).join("");
+  wrap.querySelectorAll("[data-mid]").forEach(t=>t.onclick=()=>{
+    st.settings.model=t.getAttribute("data-mid")||st.settings.model;
+    persist();chips();renderModelTiles("modelTiles");renderModelTiles("modelTilesQuick");
+    toast("success","Model: "+modelOf(st.settings.model).name);
+  });
+}
+
+function renderCommands(filter=""){
+  const f=filter.toLowerCase();
+  const list=COMMANDS.filter(c=>c.label.toLowerCase().includes(f));
+  q("#cmdList").innerHTML=list.map(c=>`<div class="item" data-cmd="${c.id}"><span>${c.label}</span><span class="kbd">↵</span></div>`).join("")||`<div class="item">No commands</div>`;
+  qa("[data-cmd]").forEach(b=>b.onclick=()=>{const cmd=COMMANDS.find(x=>x.id===b.getAttribute("data-cmd"));if(cmd){cmd.run();closeOv("cmdOverlay")}});
+}
+
+function context(){
+  const m=st.memory[memKey()]||"";
+  const fs=(st.files[st.pid]||[]).slice(-6).map(f=>"FILE:"+f.path+"\n"+cut(f.content,3500)).join("\n\n---\n\n");
+  return [m?("Memory:\n"+m):"",fs?("Files:\n"+fs):""].filter(Boolean).join("\n\n");
+}
+function sys(){return ["You are ScriptLab AI, a premium production coding assistant.","Follow slash commands exactly when present.","Use memory + file context when relevant.","Prefer secure, maintainable, idiomatic code.","Format code in fenced blocks with language tags."].join("\n")}
+function enhance(p){return p+"\n\n[Enhancer]\n- Return clear execution steps.\n- Include risks and a short testing checklist."}
+
+async function send(){
+  if(st.gen)return;
+  const i=q("#promptInput"),raw=i.value.trim();
+  if(!raw)return;
+  const c=cur();if(!c)return;
+  const p=st.settings.enh?enhance(raw):raw;
+  c.messages.push({role:"user",content:raw,ts:Date.now()});
+  if(c.messages.length===1)c.title=cut(raw.replace(/\n/g," "),42);
+  i.value="";renderChats();renderMessages();persist();
+  await run(p);
+}
+async function run(prompt){
+  const c=cur();if(!c)return;
+  st.gen=true;st.abort=new AbortController();
+  c.messages.push({role:"assistant",content:"__typing__",ts:Date.now(),typing:true});
+  renderMessages();
+  try{
+    const hist=c.messages.filter(m=>!m.typing).slice(-16).map(m=>({role:m.role,content:m.content}));
+    const full=await openRouter({
+      model:st.settings.model,system:sys(),
+      messages:[...hist.slice(0,-1),{role:"user",content:context()+"\n\nUser request:\n"+prompt}],
+      signal:st.abort.signal
+    });
+    const t=c.messages.findIndex(m=>m.typing);if(t>=0)c.messages.splice(t,1);
+    c.messages.push({role:"assistant",content:"",ts:Date.now()});
+    renderMessages();await stream(full);persist();
+  }catch(e){
+    const t=c.messages.findIndex(m=>m.typing);if(t>=0)c.messages.splice(t,1);
+    c.messages.push({role:"assistant",content:"⚠️ "+(e.message||"Unknown error"),ts:Date.now()});
+    renderMessages();toast("error",e.message||"Provider failed");
+  }finally{st.gen=false;st.abort=null;persist()}
+}
+async function stream(text){
+  const c=cur();if(!c)return;
+  const last=c.messages[c.messages.length-1];if(!last||last.role!=="assistant")return;
+  last.content="";let n=0;
+  await new Promise(res=>{
+    st.timer=setInterval(()=>{
+      if(!st.gen){clearInterval(st.timer);res();return}
+      n+=Math.max(3,Math.ceil(text.length/160));
+      last.content=text.slice(0,n);renderMessages();
+      if(n>=text.length){clearInterval(st.timer);res()}
+    },22);
+  });
+  last.content=text;renderMessages();
+}
+function stop(){if(st.abort)st.abort.abort();if(st.timer)clearInterval(st.timer);st.gen=false;toast("success","Stopped")}
+async function regen(){const c=cur();if(!c)return;const l=[...c.messages].reverse().find(m=>m.role==="user");if(!l)return toast("error","Nothing to regenerate");await run(l.content)}
+function clearChat(){const c=cur();if(!c)return;c.messages=[];renderMessages();persist();toast("success","Chat cleared")}
+function newProject(){const n=window.prompt("Project name?");if(!n)return;const p={id:uid(),name:n.trim(),createdAt:Date.now()};st.projects.unshift(p);st.pid=p.id;newChat("New Chat");renderProjects();renderChats();renderMessages();persist();toast("success","Project created")}
+function newChat(name){const c={id:uid(),projectId:st.pid,title:name,messages:[],createdAt:Date.now(),pinned:false};st.chats.unshift(c);st.cid=c.id;renderChats();renderMessages();persist();return c}
+
+function drawer(mode){
+  const dr=q("#drawer"),b=q("#drawerBody"),f=q("#drawerFoot");
+  if(mode==="context"){
+    q("#drawerTitle").textContent="📝 Context Memory";
+    b.innerHTML=`<textarea id="memoryInput" class="field" style="min-height:160px" placeholder="Add persistent context for this chat..."></textarea>`;
+    f.innerHTML=`<button class="btn primary" id="saveMemBtn">Save Context</button>`;
+    q("#memoryInput").value=st.memory[memKey()]||"";
+    q("#saveMemBtn").onclick=()=>{st.memory[memKey()]=q("#memoryInput").value;persist();toast("success","Context saved")};
+  }else if(mode==="files"){
+    const fs=st.files[st.pid]||[];
+    q("#drawerTitle").textContent="📎 Files";
+    b.innerHTML=`<div id="drop" class="field" style="text-align:center;border-style:dashed;padding:24px;cursor:pointer">📁 Drop files here<br><span style="font-size:11.5px;color:var(--muted)">.js .ts .tsx .py .css .json .md</span></div><button class="btn" id="pickFilesBtn">Upload Files</button><div class="stack" style="max-height:280px">${fs.length?fs.map((x,i)=>`<div class="item"><span>${esc(x.path)}</span><button class="btn" data-file="${i}" style="padding:4px 8px">Use</button></div>`).join(""):`<div class="item" style="color:var(--muted)">No files yet</div>`}</div>`;
+    f.innerHTML=`<span style="font-size:11.5px;color:var(--muted)">Stored locally — never uploaded.</span>`;
+    q("#pickFilesBtn").onclick=()=>q("#fileInput").click();
+    const dz=q("#drop");dz.onclick=()=>q("#fileInput").click();
+    dz.ondragover=e=>{e.preventDefault();dz.style.borderColor="var(--violet)";dz.style.background="rgba(155,124,255,.06)"};
+    dz.ondragleave=()=>{dz.style.borderColor="var(--line)";dz.style.background=""};
+    dz.ondrop=e=>{e.preventDefault();dz.style.borderColor="var(--line)";dz.style.background="";ingest(e.dataTransfer.files);setTimeout(()=>drawer("files"),100)};
+    qa("[data-file]").forEach(x=>x.onclick=()=>{const file=fs[Number(x.getAttribute("data-file"))];const i=q("#promptInput");i.value+=(i.value?"\n\n":"")+"/explain analyze file: "+file.path+"\n\n"+cut(file.content,3500);dr.classList.remove("open")});
+  }else if(mode==="diag"){
+    q("#drawerTitle").textContent="🩺 Diagnostics";
+    const m=modelOf(st.settings.model);
+    b.innerHTML=`<div class="item"><span>Provider</span><span>${m.prov}</span></div><div class="item"><span>Model</span><span>${m.name}</span></div><div class="item"><span>Tier</span><span style="color:var(--ok)">Free ✓</span></div><div class="item"><span>Messages</span><span>${cur()?.messages?.length||0}</span></div><div class="item"><span>Storage</span><span>${(JSON.stringify(st).length/1024).toFixed(1)} KB</span></div>`;
+    f.innerHTML=`<button class="btn primary" id="runTestBtn">⚡ Run Live Test</button>`;
+    q("#runTestBtn").onclick=testConnection;
+  }else{
+    q("#drawerTitle").textContent="🛠 AI Tools";
+    b.innerHTML=`<button class="btn" data-tool="s" style="justify-content:flex-start">📄 Summarize files</button><button class="btn" data-tool="d" style="justify-content:flex-start">🐛 Debug code</button><button class="btn" data-tool="o" style="justify-content:flex-start">⚡ Optimize project</button><button class="btn" data-tool="c" style="justify-content:flex-start">🔄 Convert code</button>`;
+    f.innerHTML=`<span style="font-size:11.5px;color:var(--muted)">Uses your selected free model.</span>`;
+    qa("[data-tool]").forEach(x=>x.onclick=()=>{const map={s:"/explain summarize attached files and architecture",d:"/fix debug the code and propose a patch",o:"/optimize improve performance and readability",c:"/convert convert selected code with compatibility notes"};const i=q("#promptInput");i.value=(i.value?i.value+"\n":"")+(map[x.getAttribute("data-tool")]||"/explain");dr.classList.remove("open");q("#promptInput").focus()});
+  }
+  dr.classList.add("open");
+}
+
+function ingest(list){
+  const allow=new Set(["js","ts","html","css","json","txt","jsx","tsx","md","py"]);
+  if(!st.files[st.pid])st.files[st.pid]=[];
+  const tasks=[];
+  [...list].forEach(file=>{const ext=(file.name.split(".").pop()||"").toLowerCase();if(!allow.has(ext))return;tasks.push(new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{st.files[st.pid].push({id:uid(),path:file.webkitRelativePath||file.name,ext,content:String(fr.result||""),ts:Date.now()});res()};fr.onerror=rej;fr.readAsText(file)}))});
+  Promise.all(tasks).then(()=>{persist();toast("success",tasks.length+" file(s) imported")});
+}
+
+function saveSettings(){
+  st.settings.theme=q("#themeSelect").value;
+  st.settings.accent=q("#accentInput").value;
+  st.settings.keys = st.settings.keys || {};
+  st.settings.keys.lovable    = q("#keyLovable")?.value.trim() || "";
+  st.settings.keys.openrouter = q("#keyOpenrouter")?.value.trim() || "";
+  st.settings.keys.openai     = q("#keyOpenai")?.value.trim() || "";
+  st.settings.keys.anthropic  = q("#keyAnthropic")?.value.trim() || "";
+  applyTheme();chips();persist();
+  closeOv("settingsOverlay");
+  toast("success","Settings saved");
+}
+function loadKeysIntoSettings(){
+  const k = st.settings.keys || {};
+  const l=q("#keyLovable"), a=q("#keyOpenrouter"), b=q("#keyOpenai"), c=q("#keyAnthropic");
+  if(l) l.value = k.lovable || "";
+  if(a) a.value = k.openrouter || "";
+  if(b) b.value = k.openai || "";
+  if(c) c.value = k.anthropic || "";
+}
+
+function exportChat(){
+  const c=cur();if(!c||!c.messages.length)return toast("error","No chat to export");
+  const body=c.messages.map(m=>`[${m.role.toUpperCase()}] ${m.content}`).join("\n\n");
+  const blob=new Blob([body],{type:"text/plain"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download=(c.title||"scriptlab-chat").replace(/[^a-z0-9]/gi,"_")+".txt";a.click();URL.revokeObjectURL(a.href);
+  toast("success","Chat exported");
+}
+
+async function testConnection(){
+  try{
+    const m=modelOf(st.settings.model);
+    toast("success","Testing "+m.name+"...");
+    const res=await openRouter({model:st.settings.model,system:"Reply with exactly: OK",messages:[{role:"user",content:"Reply with exactly: OK"}],signal:new AbortController().signal});
+    toast("success","✓ "+cut(res.replace(/\s+/g," ").trim(),60));
+  }catch(e){toast("error","Test failed: "+(e.message||"Unknown"))}
+}
+
+function openOv(id){q("#"+id).classList.add("open")}
+function closeOv(id){q("#"+id).classList.remove("open")}
+
+/* ============ AUTH / DASHBOARD ROUTING ============ */
+function showDash(){q("#dashWrap").classList.add("show");q("#authWrap").classList.add("hide");q("#appShell").style.display="none"}
+function showAuth(mode="signup"){q("#dashWrap").classList.remove("show");q("#authWrap").classList.remove("hide");q("#appShell").style.display="none";setAuthMode(mode)}
+function showApp(){q("#dashWrap").classList.remove("show");q("#authWrap").classList.add("hide");q("#appShell").style.display="grid"}
+
+function setAuthMode(mode){
+  const isSignup=mode==="signup";
+  qa("[data-auth-tab]").forEach(b=>b.classList.toggle("active",b.getAttribute("data-auth-tab")===mode));
+  qa("[data-signup-only]").forEach(e=>e.style.display=isSignup?"":"none");
+  qa("[data-login-only]").forEach(e=>e.style.display=isSignup?"none":"");
+  q("#authTitle").textContent=isSignup?"Create your account":"Welcome back";
+  q("#authLead").textContent=isSignup?"Get started in seconds — no credit card, no API key required.":"Log in to continue your projects and chats.";
+  q("#authSubmit").textContent=isSignup?"Create account":"Log in →";
+  q("#authSwitchText").textContent=isSignup?"Already have an account?":"New to ScriptLab?";
+  q("#authSwitchLink").textContent=isSignup?"Log in":"Sign up";
+  q("#authForm").dataset.mode=mode;
+  q("#authPass").autocomplete=isSignup?"new-password":"current-password";
+}
+function passStrength(p){let s=0;if(p.length>=8)s++;if(/[A-Z]/.test(p)&&/[a-z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^A-Za-z0-9]/.test(p))s++;return s}
+function updateStrength(){const p=q("#authPass").value;const s=passStrength(p);const bar=q("#strengthBar"),lab=q("#strengthLabel");bar.className="strength-bar"+(s?" s"+s:"");bar.style.width=(s*25)+"%";lab.textContent=["Too weak","Weak","Fair","Good","Strong"][s]}
+/* ============ LOCAL AUTH (single-file build, no server) ============ */
+const ACC_KEY = "scriptlab.accounts.v1";
+function loadAccounts(){ try { return JSON.parse(localStorage.getItem(ACC_KEY)||"{}") } catch { return {} } }
+function saveAccounts(a){ localStorage.setItem(ACC_KEY, JSON.stringify(a)) }
+async function hashPass(pass, salt){
+  const enc = new TextEncoder().encode(pass+"::"+salt);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function makeSalt(){ return Array.from(crypto.getRandomValues(new Uint8Array(12))).map(b=>b.toString(16).padStart(2,"0")).join("") }
+function setUserLocal(rec){
+  st.user = { id: rec.id, email: rec.email, name: rec.name, avatar: rec.avatar||null, joined: rec.joined||Date.now() };
+  persist();
+}
+async function authSubmit(e){
+  e.preventDefault();
+  const mode = q("#authForm").dataset.mode || "signup";
+  const email = q("#authEmail").value.trim().toLowerCase();
+  const pass  = q("#authPass").value;
+  const name  = q("#authName").value.trim();
+  if(!/.+@.+\..+/.test(email)) return toast("error","Enter a valid email");
+  if(pass.length<8) return toast("error","Password needs at least 8 characters");
+  const submitBtn = q("#authSubmit"); const origLabel = submitBtn.textContent;
+  submitBtn.disabled = true; submitBtn.textContent = mode==="signup" ? "Creating account…" : "Signing in…";
+  try {
+    const accounts = loadAccounts();
+    if(mode==="signup"){
+      if(!name){ toast("error","Enter your name"); return; }
+      if(!q("#authTerms").checked){ toast("error","Please accept the Terms"); return; }
+      if(accounts[email]){ toast("error","Account already exists — switch to Log in"); return; }
+      const salt = makeSalt();
+      const hash = await hashPass(pass, salt);
+      const rec = { id:"u_"+Math.random().toString(36).slice(2,11), email, name, salt, hash, joined: Date.now(), avatar:null };
+      accounts[email] = rec;
+      saveAccounts(accounts);
+      setUserLocal(rec);
+      toast("success","Welcome, "+name.split(" ")[0]+" 🎉");
+      showApp(); renderMessages();
+    } else {
+      const rec = accounts[email];
+      if(!rec){ toast("error","No account for that email — sign up first"); return; }
+      const hash = await hashPass(pass, rec.salt);
+      if(hash !== rec.hash){ toast("error","Incorrect password"); return; }
+      setUserLocal(rec);
+      toast("success","Welcome back, "+(rec.name?.split(" ")[0]||""));
+      showApp(); renderMessages();
+    }
+  } catch(err){
+    toast("error", err.message || "Auth failed");
+  } finally {
+    submitBtn.disabled = false; submitBtn.textContent = origLabel;
+  }
+}
+async function oauthSignIn(provider){
+  /* Single-file build runs offline — OAuth requires hosted redirect URLs.
+     We create a local guest account scoped to this browser instead. */
+  const label = provider==="google" ? "Google" : "GitHub";
+  const accounts = loadAccounts();
+  const email = `${provider}-guest@local.scriptlab`;
+  let rec = accounts[email];
+  if(!rec){
+    rec = { id:"u_"+provider+"_"+Math.random().toString(36).slice(2,8), email,
+            name: label+" User", salt:"", hash:"", joined: Date.now(), avatar:null, oauth: provider };
+    accounts[email] = rec; saveAccounts(accounts);
+  }
+  setUserLocal(rec);
+  toast("success","Signed in with "+label+" (local profile)");
+  showApp(); renderMessages();
+}
+function signOut(){
+  st.user=null; persist(); toast("success","Signed out"); showDash();
+}
+function forgotPassword(){
+  const email = q("#authEmail").value.trim().toLowerCase();
+  if(!/.+@.+\..+/.test(email)) return toast("error","Enter your email above first");
+  const accounts = loadAccounts();
+  if(!accounts[email]) return toast("error","No account for that email");
+  const tmp = "reset-"+Math.random().toString(36).slice(2,8);
+  hashPass(tmp, accounts[email].salt).then(h=>{
+    accounts[email].hash = h; saveAccounts(accounts);
+    toast("success","Temp password set: "+tmp+" — change it after login");
+  });
+}
+function bootAuth(){ /* nothing to bootstrap — st.user is restored from localStorage by hydrate() */ }
+
+function renderModelShowcase(){
+  const wrap=q("#modelShow");if(!wrap)return;
+  wrap.innerHTML=MODELS.map(m=>`<div class="ms"><div class="nm">${esc(m.name)}</div><div class="pr">${esc(m.prov)}</div><span class="free">FREE</span></div>`).join("");
+}
+
+/* ============ INIT ============ */
+document.addEventListener("DOMContentLoaded",()=>{
+  hydrate();boot();applyTheme();bootAuth();
+  renderProjects();renderChats();renderMessages();chips();
+  renderModelTiles("modelTiles");renderModelTiles("modelTilesQuick");
+  renderCommands();renderModelShowcase();persist();
+
+  /* Routing: logged in → app, logged out → dashboard */
+  if(st.user)showApp(); else showDash();
+
+  /* Dashboard bindings */
+  q("#dashLoginBtn").onclick=()=>showAuth("login");
+  q("#dashSignupBtn").onclick=()=>showAuth("signup");
+  q("#dashCtaSignup").onclick=()=>showAuth("signup");
+  q("#dashCtaDemo").onclick=()=>document.getElementById("sec-features").scrollIntoView({behavior:"smooth"});
+  q("#priceFreeBtn").onclick=()=>showAuth("signup");
+  q("#priceProBtn").onclick=()=>toast("success","Added to waitlist ✦");
+  qa("[data-scroll]").forEach(a=>a.onclick=()=>{const t=document.getElementById("sec-"+a.getAttribute("data-scroll"));if(t)t.scrollIntoView({behavior:"smooth"})});
+
+  /* Auth bindings */
+  qa("[data-auth-tab]").forEach(b=>b.onclick=()=>setAuthMode(b.getAttribute("data-auth-tab")));
+  q("#authForm").addEventListener("submit",authSubmit);
+  q("#authPass").addEventListener("input",updateStrength);
+  q("#authSwitchLink").onclick=()=>setAuthMode(q("#authForm").dataset.mode==="signup"?"login":"signup");
+  q("#backToDash").onclick=showDash;
+  qa("[data-oauth]").forEach(b=>b.onclick=()=>oauthSignIn(b.getAttribute("data-oauth")));
+  q("#forgotLink").onclick=forgotPassword;
+  q("#userBtn").onclick=()=>{if(st.user)signOut();else showAuth("login")};
+
+  /* Main bindings */
+  q("#newProjectBtn").onclick=newProject;
+  q("#newChatBtn").onclick=()=>{newChat("New Chat");toast("success","New chat created")};
+  q("#sendBtn").onclick=send;q("#stopBtn").onclick=stop;q("#regenBtn").onclick=regen;
+  q("#clearBtn").onclick=clearChat;q("#btnExport").onclick=exportChat;
+  q("#btnDiag").onclick=()=>drawer("diag");
+  q("#btnContext").onclick=()=>drawer("context");
+  q("#btnFiles").onclick=()=>drawer("files");
+  q("#btnTools").onclick=()=>drawer("tools");
+  q("#btnModels").onclick=()=>{renderModelTiles("modelTilesQuick");openOv("modelOverlay")};
+  q("#closeModelOv").onclick=()=>closeOv("modelOverlay");
+  q("#closeDrawerBtn").onclick=()=>q("#drawer").classList.remove("open");
+
+  q("#openSettingsBtn").onclick=()=>{renderModelTiles("modelTiles");loadKeysIntoSettings();openOv("settingsOverlay")};
+  q("#closeSettingsBtn").onclick=()=>closeOv("settingsOverlay");
+  q("#saveSettingsBtn").onclick=saveSettings;
+  q("#themeSelect").onchange=()=>{st.settings.theme=q("#themeSelect").value;applyTheme();persist()};
+  q("#accentInput").oninput=()=>{st.settings.accent=q("#accentInput").value;applyTheme();persist()};
+  q("#enhancerBtn").onclick=()=>{st.settings.enh=!st.settings.enh;q("#enhancerBtn").textContent="✨ Enhancer: "+(st.settings.enh?"On":"Off");persist();toast("success","Enhancer "+(st.settings.enh?"enabled":"disabled"))};
+
+  q("#fileInput").onchange=e=>ingest(e.target.files);
+  q("#promptInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
+  q("#chatSearch").oninput=e=>{st.search=e.target.value;renderChats()};
+  qa("[data-slash]").forEach(b=>b.onclick=()=>{const i=q("#promptInput"),v=b.getAttribute("data-slash")||"";i.value=(i.value?i.value+"\n":"")+v+" ";i.focus()});
+
+  q("#openCmdBtn").onclick=()=>{openOv("cmdOverlay");setTimeout(()=>q("#cmdSearch").focus(),50)};
+  q("#closeCmdBtn").onclick=()=>closeOv("cmdOverlay");
+  q("#cmdSearch").oninput=e=>renderCommands(e.target.value);
+
+  document.addEventListener("keydown",e=>{
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();openOv("cmdOverlay");setTimeout(()=>q("#cmdSearch").focus(),50)}
+    if(e.key==="Escape"){closeOv("cmdOverlay");closeOv("settingsOverlay");closeOv("modelOverlay");q("#drawer").classList.remove("open")}
+  });
+
+  q("#settingsOverlay").onclick=e=>{if(e.target===q("#settingsOverlay"))closeOv("settingsOverlay")};
+  q("#cmdOverlay").onclick=e=>{if(e.target===q("#cmdOverlay"))closeOv("cmdOverlay")};
+  q("#modelOverlay").onclick=e=>{if(e.target===q("#modelOverlay"))closeOv("modelOverlay")};
+});
+</script>
+ 
+</body>
+</html>
